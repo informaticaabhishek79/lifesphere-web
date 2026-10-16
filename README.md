@@ -18,8 +18,20 @@ Sign in with any mobile number. In development the API shows the one-time code o
 Want screens full of sample data? With the API running in development:
 
 ```bash
-npm run demo-data      # creates Kamla (+91 98100 00001) and Priya (+91 98100 00002) with tasks, check-ins, a household, a group, a complaint…
+npm run demo-data      # six people plus staff data across every module (details below)
 ```
+
+| Sign in with | Who | Good for trying |
+|---|---|---|
+| 9810000001 | Kamla Devi | Senior mode + Hindi, check-ins, help button, medicines, complaint with AI draft, booking + review |
+| 9810000002 | Priya Sharma | Dashboard, tasks, calendar, household (lists, inventory, budget), groups she runs, moderation reports, provider profile in review, a pending contact invitation |
+| 9810000003 | Rahul Sharma | Household member, assigned chores, open service request |
+| 9810000004 | Meena Iyer | Community moderator, recommendations |
+| 9810000005 | Arjun Kumar | Provider portal: jobs, reviews and replies, an open request to claim |
+| 9810000006 | Sunita Rao | Provider portal; author of a reported spam post |
+| 9999900001 | Admin | Staff console (moderation queue, privacy requests, providers). Needs `npm run db:seed -- --admin=+919999900001` in the API first |
+
+The script approves the two providers through the staff console API. If the admin has no authenticator yet, it sets one up and prints the key to add to your authenticator app; if it already has one, pass `ADMIN_TOTP_SECRET=<key>` or approve the providers yourself in **Staff console → Providers** and run `npm run demo-data -- --force`. New sharing takes effect after the API's cooling-off period (`GRANT_COOLOFF_MINUTES`, 10 by default).
 
 ## How it talks to the API
 
