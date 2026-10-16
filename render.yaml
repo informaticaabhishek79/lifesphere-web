@@ -1,0 +1,15 @@
+# Render blueprint: LifeSphere web app. Deploy the API repo first.
+services:
+  - type: web
+    name: lifesphere-web
+    runtime: node
+    plan: starter
+    region: singapore
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /sign-in
+    envVars:
+      - { key: NODE_ENV, value: production }
+      # Address of the API. Use its private address (Render dashboard -> lifesphere-api -> Connect -> Internal,
+      # e.g. http://lifesphere-api:10000) so traffic stays on Render's private network, or its public https URL.
+      - { key: API_URL, sync: false }

@@ -1,0 +1,254 @@
+@import 'tailwindcss';
+
+/*
+ * LifeSphere design tokens. Colours are semantic so light, dark and high-contrast themes swap cleanly.
+ * Clean cool-grey background, deep teal for trust and action, terracotta for warmth, red reserved for help/danger.
+ */
+:root {
+  --bg: #f4f6f8;
+  --bg-2: #e9edf1;
+  --surface: #ffffff;
+  --surface-2: #f8fafb;
+  --ink: #1d2827;
+  --ink-2: #3f4b4a;
+  --muted: #66716f;
+  --line: #e2e7ec;
+  --line-strong: #c9d1d9;
+  --brand: #0d5c58;
+  --brand-hover: #0a4a47;
+  --brand-ink: #ffffff;
+  --brand-soft: #dcece8;
+  --brand-softer: #edf5f2;
+  --accent: #b9572f;
+  --accent-soft: #f6e4da;
+  --danger: #b42318;
+  --danger-hover: #912018;
+  --danger-soft: #fde8e6;
+  --warn: #8a5a00;
+  --warn-soft: #fbefd5;
+  --ok: #17663a;
+  --ok-soft: #dff1e5;
+  --info: #1f5a8a;
+  --info-soft: #e1edf7;
+  --focus: #0d5c58;
+  --shadow: 0 1px 2px rgb(29 40 39 / 0.06), 0 4px 16px -8px rgb(29 40 39 / 0.12);
+  --scale: 1;
+  color-scheme: light;
+}
+
+/* Light is the default. Dark is used only when the user picks it in Settings. */
+:root[data-theme='dark'] {
+  --bg: #111716;
+  --bg-2: #0c1110;
+  --surface: #182120;
+  --surface-2: #1d2726;
+  --ink: #e7eeec;
+  --ink-2: #c3cecb;
+  --muted: #93a19e;
+  --line: #2a3634;
+  --line-strong: #3a4846;
+  --brand: #5cb8ae;
+  --brand-hover: #79c9c0;
+  --brand-ink: #0b1514;
+  --brand-soft: #1b3734;
+  --brand-softer: #152a28;
+  --accent: #e08a62;
+  --accent-soft: #3a2519;
+  --danger: #f2786c;
+  --danger-hover: #f59a90;
+  --danger-soft: #3b1d1a;
+  --warn: #e6b45a;
+  --warn-soft: #36290f;
+  --ok: #6bcf91;
+  --ok-soft: #15301f;
+  --info: #79b3e6;
+  --info-soft: #172a3b;
+  --focus: #79c9c0;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -12px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+/* High contrast: pure black on white, heavy borders, unmistakable focus. */
+:root[data-theme='high_contrast'] {
+  --bg: #ffffff;
+  --bg-2: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #ffffff;
+  --ink: #000000;
+  --ink-2: #000000;
+  --muted: #1a1a1a;
+  --line: #000000;
+  --line-strong: #000000;
+  --brand: #003d3a;
+  --brand-hover: #000000;
+  --brand-ink: #ffffff;
+  --brand-soft: #ffffff;
+  --brand-softer: #ffffff;
+  --accent: #7a2e00;
+  --accent-soft: #ffffff;
+  --danger: #a00000;
+  --danger-hover: #700000;
+  --danger-soft: #ffffff;
+  --warn: #5c3b00;
+  --warn-soft: #ffffff;
+  --ok: #0b4d26;
+  --ok-soft: #ffffff;
+  --info: #0b3b63;
+  --info-soft: #ffffff;
+  --focus: #000000;
+  --shadow: none;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-softer: var(--brand-softer);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-soft: var(--danger-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --font-sans: 'Figtree Variable', 'Noto Sans Devanagari Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', 'Noto Sans Devanagari Variable', ui-serif, Georgia, serif;
+  --shadow-card: var(--shadow);
+}
+
+html {
+  /* Text size follows the user's accessibility setting (1.0–2.0); senior mode sets at least 1.2. */
+  font-size: calc(100% * var(--scale));
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv11';
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+:lang(hi) body {
+  line-height: 1.65;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+[data-theme='high_contrast'] :focus-visible {
+  outline-width: 4px;
+  box-shadow: 0 0 0 6px #ffd400;
+}
+
+[data-theme='high_contrast'] .card,
+[data-theme='high_contrast'] input,
+[data-theme='high_contrast'] select,
+[data-theme='high_contrast'] textarea {
+  border-width: 2px !important;
+}
+
+[data-reduce-motion='true'] *,
+[data-reduce-motion='true'] *::before,
+[data-reduce-motion='true'] *::after {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.01em;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-2) 0%, var(--surface-2) 50%, var(--bg-2) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise {
+  animation: rise 0.28s ease-out both;
+}
+
+dialog::backdrop {
+  background: rgb(10 20 19 / 0.45);
+  backdrop-filter: blur(2px);
+}
+
+dialog[open] {
+  animation: rise 0.2s ease-out both;
+}
+
+/* Native date/time pickers follow the theme. */
+input[type='date'],
+input[type='time'],
+input[type='datetime-local'] {
+  color-scheme: inherit;
+}
+
+.prose-body p + p {
+  margin-top: 0.6em;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
