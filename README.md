@@ -31,6 +31,8 @@ npm run demo-data      # six people plus staff data across every module (details
 | 9810000006 | Sunita Rao | Provider portal; author of a reported spam post |
 | 9999900001 | Admin | Staff console (moderation queue, privacy requests, providers). Needs `npm run db:seed -- --admin=+919999900001` in the API first |
 
+Want the data in **your own account**? Run `npm run demo-data -- --phone=<your 10-digit number>` and your account takes Priya's place (household, groups, complaints, provider profile, invitations…).
+
 The script approves the two providers through the staff console API. If the admin has no authenticator yet, it sets one up and prints the key to add to your authenticator app; if it already has one, pass `ADMIN_TOTP_SECRET=<key>` or approve the providers yourself in **Staff console → Providers** and run `npm run demo-data -- --force`. New sharing takes effect after the API's cooling-off period (`GRANT_COOLOFF_MINUTES`, 10 by default).
 
 ## How it talks to the API

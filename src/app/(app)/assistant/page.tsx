@@ -52,7 +52,10 @@ export default function AssistantPage() {
   const store = me.preferences.aiStoreHistory;
   const conversations = useQuery({ queryKey: ['assistant', 'conversations'], queryFn: () => api.get<Conversation[]>('/v1/assistant/conversations'), enabled: historyOpen });
 
-  useEffect(() => end.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }), [turns]);
+  useEffect(() => {
+    // Newer browsers return a Promise from scrollIntoView; an effect must return nothing or a cleanup function.
+    end.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }, [turns]);
 
   const ask = async (q: string) => {
     const text = q.trim();

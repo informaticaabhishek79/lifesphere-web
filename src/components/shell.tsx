@@ -228,7 +228,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { data: health } = useIntegrations();
   const simulated = health && Object.values(health.integrations).some((v) => v === 'simulated');
 
-  useEffect(() => setDrawer(false), [pathname]);
+  useEffect(() => {
+    setDrawer(false);
+  }, [pathname]);
 
   const bottom = [
     { href: '/', label: t('nav.home'), icon: Home },

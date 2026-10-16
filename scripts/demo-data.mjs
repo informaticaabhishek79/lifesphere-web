@@ -6,6 +6,7 @@
  *   npm run demo-data                 # http://localhost:4000 (or API_URL=...)
  *   npm run demo-data -- --force      # run again even if the sample data already exists
  *   npm run demo-data -- --no-admin   # skip the staff steps (provider approvals etc.)
+ *   npm run demo-data -- --phone=9876543210   # put "Priya's" data into YOUR account instead (your number)
  *
  * People (sign in with the number; the code is shown on screen in development):
  *   9810000001  Kamla Devi    – mother, senior mode, Hindi. Shares check-ins & help alerts with her family.
@@ -22,6 +23,12 @@ const API = (process.env.API_URL ?? 'http://localhost:4000').replace(/\/$/, '') 
 const FORCE = process.argv.includes('--force');
 const NO_ADMIN = process.argv.includes('--no-admin');
 const ADMIN_PHONE = process.env.ADMIN_PHONE ?? '+919999900001';
+const phoneArg = process.argv.find((a) => a.startsWith('--phone='))?.split('=')[1];
+const toE164 = (p) => {
+  const d = p.replace(/\D/g, '');
+  return d.length === 10 ? `+91${d}` : d.length === 12 && d.startsWith('91') ? `+${d}` : `+${d}`;
+};
+const MAIN_PHONE = phoneArg ? toE164(phoneArg) : '+919810000002';
 let failures = 0;
 
 async function req(token, method, path, body) {
@@ -121,6 +128,7 @@ const day = (d) => {
   x.setDate(x.getDate() + d);
   return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`;
 };
+const inHours = (h) => new Date(Date.now() + h * 3600_000).toISOString();
 const thisMonth = `${day(0).slice(0, 7)}-01`;
 const ignoreConflict = (e) => (e.status === 409 ? null : Promise.reject(e));
 
@@ -140,7 +148,7 @@ const section = (s) => console.log(`\n${s}`);
 // ────────────────────────────────────────────────────────────────────────────
 console.log(`LifeSphere sample data → ${API}`);
 const kamla = await signIn('+919810000001', 'Kamla Devi');
-const priya = await signIn('+919810000002', 'Priya Sharma');
+const priya = await signIn(MAIN_PHONE, 'Priya Sharma');
 const rahul = await signIn('+919810000003', 'Rahul Sharma');
 const meena = await signIn('+919810000004', 'Meena Iyer');
 const arjun = await signIn('+919810000005', 'Arjun Kumar');
@@ -165,7 +173,16 @@ await step('Priya, Rahul, Meena: locality and profiles', async () => {
   await priya.patch('/me/profile', { localityId: locality?.id, discoverable: true, bio: 'Product manager, mother of two.' });
   await rahul.patch('/me/profile', { localityId: locality?.id, discoverable: true });
   await meena.patch('/me/profile', { localityId: locality?.id, discoverable: true });
-  await priya.patch('/me/preferences', { quietHoursStart: '22:30', quietHoursEnd: '07:00' });
+  await priya.patch('/me/preferences', { quietHoursStart: '22:30', quietHoursEnd: '07:00', lockScreenDetail: 'generic' });
+});
+await step('Notification settings (help alerts by SMS even in quiet hours, community by email off)', async () => {
+  await priya.put('/notifications/preferences', { items: [
+    { category: 'help', inApp: true, push: true, sms: true, bypassQuietHours: true },
+    { category: 'checkins', inApp: true, push: true, bypassQuietHours: true },
+    { category: 'community', inApp: true, push: false, email: false },
+    { category: 'services', inApp: true, push: true, email: true },
+  ] });
+  await kamla.put('/notifications/preferences', { items: [{ category: 'reminders', inApp: true, push: true, sms: true }] });
 });
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -184,7 +201,7 @@ await step('Rahul ⇄ Kamla', () => connect(rahul, kamla, '+919810000001', 'Moth
 await step('Priya ⇄ Rahul', () => connect(priya, rahul, '+919810000003', 'Husband', 'Wife'));
 await step('Meena invites Priya (left pending, so Priya can accept or decline)', async () => {
   const out = await meena.get('/contacts/invitations');
-  if (!out.some((i) => i.status === 'pending')) await meena.post('/contacts/invitations', { phone: '+919810000002', label: 'Neighbour', message: 'Hello from flat 4B!' });
+  if (!out.some((i) => i.status === 'pending')) await meena.post('/contacts/invitations', { phone: MAIN_PHONE, label: 'Neighbour', message: 'Hello from flat 4B!' });
 });
 
 section('Sharing (consented, with a cooling-off period before it starts)');
@@ -247,9 +264,9 @@ await step('Rahul: his own tasks', async () => {
   await rahul.post('/tasks', { title: 'Fix the bathroom tap', dueAt: at(-1), priority: 'normal' });
 });
 await step('Reminders', async () => {
-  await kamla.post('/reminders', { title: 'Call Priya', fireAt: at(1, 18), channels: ['in_app', 'push'] });
+  await kamla.post('/reminders', { title: 'Call Priya', fireAt: inHours(26), channels: ['in_app', 'push'] });
   await kamla.post('/reminders', { title: 'Yoga class', fireAt: at(2, 7), channels: ['in_app'] });
-  await priya.post('/reminders', { title: 'Order groceries', fireAt: at(0, 21), channels: ['in_app', 'push'] });
+  await priya.post('/reminders', { title: 'Order groceries', fireAt: inHours(2), channels: ['in_app', 'push'] });
   await priya.post('/reminders', { title: 'Parent–teacher meeting', fireAt: at(3, 9), channels: ['in_app', 'email'] });
 });
 await step('Calendar events (appointments, visits, activities; one weekly)', async () => {
@@ -364,7 +381,7 @@ if (groups) {
   await step('Posts of every kind, comments, reactions, a pinned post and a bookmark', async () => {
     const { residents, family, seniors } = groups;
     const water = await priya.post(`/community/groups/${residents.id}/posts`, { kind: 'announcement', title: 'Water supply off tomorrow', body: 'Water supply will be off tomorrow from 10 am to 2 pm for tank cleaning. Please store water tonight.' });
-    await priya.post(`/community/posts/${water.id}/pin`, { pinned: true });
+    await priya.post(`/community/posts/${water.id}/pin`, { pinned: true }).catch(() => null);
     await priya.post(`/community/groups/${residents.id}/posts`, { kind: 'event', title: 'Diwali get-together', body: 'Join us in the community hall. Snacks on us! Kids’ rangoli competition at 6.', eventStartsAt: at(10, 18), eventEndsAt: at(10, 21), eventLocationText: 'Community hall, Block A' });
     const rec = await meena.post(`/community/groups/${residents.id}/posts`, { kind: 'recommendation', title: 'Good electrician', body: 'Arjun fixed our wiring quickly and charged fairly. Highly recommend.' });
     const q = await kamla.post(`/community/groups/${residents.id}/posts`, { kind: 'help_request', title: 'Someone to help with online bill payment?', body: 'I find the electricity website confusing. Could a neighbour help me once?' });
@@ -372,14 +389,14 @@ if (groups) {
     await meena.post(`/community/groups/${residents.id}/posts`, { kind: 'civic_info', title: 'Property tax deadline', body: 'MCD property tax rebate ends on the 30th. Pay online at the MCD website.' });
     await kamla.post(`/community/groups/${seniors.id}/posts`, { kind: 'text', body: 'Lovely walk today! See everyone tomorrow at 6:30.' });
     await priya.post(`/community/groups/${family.id}/posts`, { kind: 'text', body: 'Ma’s birthday dinner on Sunday – I’ll book the table.' });
-    await kamla.post(`/community/posts/${water.id}/comments`, { body: 'Thank you for letting us know.' });
-    const c = await meena.post(`/community/posts/${q.id}/comments`, { body: 'Aunty, I can come by on Sunday morning and show you.' });
-    await kamla.post(`/community/posts/${q.id}/comments`, { body: 'Thank you beta, that would be wonderful.', parentCommentId: c.id });
-    await kamla.put(`/community/posts/${water.id}/reaction`, { kind: 'thanks' });
-    await rahul.put(`/community/posts/${water.id}/reaction`, { kind: 'like' });
-    await priya.put(`/community/posts/${rec.id}/reaction`, { kind: 'helpful' });
-    await priya.put(`/community/posts/${q.id}/reaction`, { kind: 'support' });
-    await priya.put(`/community/posts/${rec.id}/bookmark`);
+    await kamla.post(`/community/posts/${water.id}/comments`, { body: 'Thank you for letting us know.' }).catch(() => null);
+    const c = await meena.post(`/community/posts/${q.id}/comments`, { body: 'Aunty, I can come by on Sunday morning and show you.' }).catch(() => null);
+    await kamla.post(`/community/posts/${q.id}/comments`, { body: 'Thank you beta, that would be wonderful.', parentCommentId: c?.id }).catch(() => null);
+    await kamla.put(`/community/posts/${water.id}/reaction`, { kind: 'thanks' }).catch(() => null);
+    await rahul.put(`/community/posts/${water.id}/reaction`, { kind: 'like' }).catch(() => null);
+    await priya.put(`/community/posts/${rec.id}/reaction`, { kind: 'helpful' }).catch(() => null);
+    await priya.put(`/community/posts/${q.id}/reaction`, { kind: 'support' }).catch(() => null);
+    await priya.put(`/community/posts/${rec.id}/bookmark`).catch(() => null);
   });
   spamPost = await step('A spam post, reported by Priya and Kamla (goes to the moderation queue)', async () => {
     const p = await sunita.post(`/community/groups/${groups.residents.id}/posts`, { kind: 'text', body: 'EARN ₹50,000 A WEEK FROM HOME!!! Click my link and send your bank details to join. Limited seats!!!' });
@@ -416,8 +433,8 @@ const sunitaP = await step('Sunita Home Services (submitted for verification)', 
     ['home-cleaning', 'Deep cleaning (2BHK)', '₹2,499', 'Kitchen, bathrooms, fans and windows.'],
     ['senior-companionship', 'Companion for elders (4 hours)', '₹600 per visit', 'Conversation, walks, help with errands.'],
   ]));
-await step('Priya’s Tuition (left in review – shows the provider portal while waiting)', () =>
-  provider(priya, { displayName: 'Priya’s Maths Tuition', providerType: 'individual', description: 'Maths for classes 6–10, weekends only.' }, [['tech-help', 'Online maths session', '₹400 per hour']]));
+await step('Maths tuition profile (left in review – shows the provider portal while waiting)', () =>
+  provider(priya, { displayName: 'Home Maths Tuition', providerType: 'individual', description: 'Maths for classes 6–10, weekends only.' }, [['tech-help', 'Online maths session', '₹400 per hour']]));
 
 // Staff: verify and approve the two providers so they show in search.
 let adminInfo = null;
@@ -435,6 +452,25 @@ if (!NO_ADMIN) {
       });
     }
   }
+}
+
+if (adminInfo?.admin) {
+  const admin = adminInfo.admin;
+  await step('Guides: 5 more published articles (consumer rights, scams, seniors, civic, home)', async () => {
+    const existing = await admin.get('/admin/knowledge/articles').catch(() => ({ items: [] }));
+    if ((existing.items ?? existing).some?.((a) => a.title === 'Spot and stop UPI payment scams')) return;
+    const src = await admin.post('/admin/knowledge/sources', { name: 'LifeSphere editorial', publisher: 'LifeSphere', kind: 'internal', reliabilityTier: 2, reliabilityNote: 'Written by the LifeSphere team from official sources; check the linked source for the latest rules.', reviewIntervalDays: 180 });
+    const articles = [
+      ['consumer_complaints', 'How to file a complaint on the National Consumer Helpline', 'Call 1915 or use the NCH website or app. Keep your invoice, order number and any chat or email with the seller.', 'Steps:\n1. Collect your bill, order ID, warranty card and messages with the seller.\n2. Register on the National Consumer Helpline website or app, or call 1915.\n3. Choose the sector (e-commerce, telecom, banking…), describe what happened and what you want.\n4. Note the docket number. The company is asked to respond; you can track it online.\n5. If it is not resolved, you can approach the District Consumer Commission (e-Daakhil portal).'],
+      ['digital_safety', 'Spot and stop UPI payment scams', 'You never need to enter your UPI PIN to RECEIVE money. Anyone asking for it is a scammer.', 'Warning signs:\n• A “refund” or “prize” that asks you to scan a QR code or enter your PIN.\n• Callers claiming to be from your bank, KYC or electricity board asking you to install an app.\n• Urgent threats: “your account will be blocked today”.\n\nWhat to do: hang up, call your bank on the number printed on your card, and report at cybercrime.gov.in or by calling 1930.'],
+      ['familycare', 'Setting up daily check-ins for an elderly parent', 'A short daily “I’m OK” tap lets family know all is well, and alerts them only when a check-in is missed.', 'Agree a time that suits your parent’s routine (after the morning walk or tea). Choose one or two family members to alert. Give a grace period so a late tap is not an emergency. Test it together once. Check-ins are not an emergency service — in an emergency call 112.'],
+      ['civic', 'Reporting a broken streetlight or garbage problem', 'Note the exact spot, take a photo, and report to your municipal body; share with your residents’ group so others can add to it.', 'Most cities have a helpline and an app (for example MCD 311 in Delhi). Give a landmark, pole number if visible, and how long it has been a problem. Keep the complaint number and follow up after the promised time.'],
+      ['household', 'Keeping appliance warranties and service dates in one place', 'Add each appliance with its purchase date, warranty end and a service schedule so you get a reminder before it is due.', 'Photograph the bill and warranty card. Add the serial number. Set a service interval (water purifier filter ~90 days, AC before summer). When the warranty is about to end, check whether an extended warranty is worth it.'],
+    ];
+    for (const [topic, title, summary, body] of articles) {
+      await admin.post('/admin/knowledge/articles', { sourceId: src.id, title, summary, body, topic, language: 'en', publishedOn: day(-30), lastReviewedOn: day(-7), publish: true });
+    }
+  });
 }
 
 const arjunActive = arjunP ? await kamla.get(`/services/providers/${arjunP.id}`).then(() => true).catch(() => false) : false;
@@ -487,7 +523,7 @@ await step('Privacy: Priya asks for a copy of her data; Rahul raises a grievance
 
 // ────────────────────────────────────────────────────────────────────────────
 console.log(`\nDone${failures ? ` with ${failures} step(s) skipped` : ''}. Open the web app and sign in with any of these numbers:`);
-console.log('  9810000001 Kamla (senior mode, Hindi)   9810000002 Priya   9810000003 Rahul');
+console.log(`  9810000001 Kamla (senior mode, Hindi)   ${phoneArg ? `${MAIN_PHONE.replace('+91', '')} you (in Priya's role)` : '9810000002 Priya'}   9810000003 Rahul`);
 console.log('  9810000004 Meena                        9810000005 Arjun (provider)   9810000006 Sunita (provider)');
 if (adminInfo?.newSecret) {
   console.log('\nStaff console: an authenticator was set up for the admin (9999900001).');
