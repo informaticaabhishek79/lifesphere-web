@@ -126,8 +126,8 @@
   --color-ok-soft: var(--ok-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
-  --font-sans: 'Figtree Variable', 'Noto Sans Devanagari Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Fraunces Variable', 'Noto Sans Devanagari Variable', ui-serif, Georgia, serif;
+  --font-sans: 'Figtree Variable', 'Noto Sans Devanagari Variable', 'Noto Sans Bengali Variable', 'Noto Sans Tamil Variable', 'Noto Sans Telugu Variable', 'Noto Sans Arabic Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', 'Noto Sans Devanagari Variable', 'Noto Sans Bengali Variable', 'Noto Sans Tamil Variable', 'Noto Sans Telugu Variable', 'Noto Sans Arabic Variable', ui-serif, Georgia, serif;
   --shadow-card: var(--shadow);
 }
 
@@ -146,8 +146,25 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-:lang(hi) body {
-  line-height: 1.65;
+:lang(hi) body,
+:lang(mr) body,
+:lang(bn) body,
+:lang(ta) body,
+:lang(te) body,
+:lang(ar) body {
+  line-height: 1.7;
+}
+
+/* Arabic: the Latin display face has no Arabic glyphs, and letter-spacing breaks joined script. */
+:lang(ar) .font-display,
+:lang(ar) body {
+  font-family: 'Noto Sans Arabic Variable', var(--font-sans);
+  letter-spacing: 0;
+}
+
+/* Directional icons (arrows, chevrons) point the other way in right-to-left languages. */
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
 }
 
 :focus-visible {

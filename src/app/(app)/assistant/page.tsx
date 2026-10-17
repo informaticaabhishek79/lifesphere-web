@@ -126,7 +126,7 @@ export default function AssistantPage() {
         {turns.length === 0 && (
           <div className="grid gap-2 sm:grid-cols-2">
             {EXAMPLES.map((k) => (
-              <button key={k} type="button" onClick={() => ask(t(`assistant.${k}`))} className="card px-4 py-3 text-left text-sm hover:border-line-strong">
+              <button key={k} type="button" onClick={() => ask(t(`assistant.${k}`))} className="card px-4 py-3 text-start text-sm hover:border-line-strong">
                 {t(`assistant.${k}`)}
               </button>
             ))}
@@ -134,7 +134,7 @@ export default function AssistantPage() {
         )}
         {turns.map((turn, i) => (
           <div key={i} className="space-y-3">
-            <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-brand px-4 py-2.5 text-brand-ink">{turn.question}</div>
+            <div className="ms-auto max-w-[85%] rounded-2xl rounded-ee-md bg-brand px-4 py-2.5 text-brand-ink">{turn.question}</div>
             {!turn.answer && !turn.error && <div className="skeleton h-20 w-3/4" />}
             {turn.error ? <ErrorNotice error={turn.error} /> : null}
             {turn.answer && <AnswerBlock a={turn.answer} onFeedback={(rating) => { setReason('not_helpful'); setComment(''); setFeedback({ answer: turn.answer!, rating }); }} onAction={(href) => router.push(href)} />}
@@ -176,7 +176,7 @@ export default function AssistantPage() {
           {conversations.data?.length === 0 && <li className="py-4 text-center text-muted">{t('common.emptyList')}</li>}
           {conversations.data?.map((c) => (
             <li key={c.id} className="flex items-center gap-2 py-2">
-              <button type="button" className="min-w-0 flex-1 text-left" onClick={() => loadConversation(c.id)}>
+              <button type="button" className="min-w-0 flex-1 text-start" onClick={() => loadConversation(c.id)}>
                 <div className="truncate font-medium">{c.title ?? t('assistant.untitled')}</div>
                 <div className="text-xs text-muted">{fmt.ago(c.updatedAt)}{c.expiresAt && ` · ${t('assistant.deletesOn', { date: fmt.date(c.expiresAt) })}`}</div>
               </button>
@@ -251,7 +251,7 @@ function AnswerBlock({ a, onFeedback, onAction }: { a: AssistantAnswer; onFeedba
       {a.citations.length > 0 && (
         <div>
           <div className="mb-1 text-xs font-bold uppercase tracking-wide text-muted">{t('assistant.sources')}</div>
-          <ol className="list-decimal space-y-1 pl-5 text-sm">
+          <ol className="list-decimal space-y-1 ps-5 text-sm">
             {a.citations.map((c: Citation, i) => (
               <li key={`${c.articleId}-${i}`}>
                 {c.url ? (
@@ -280,7 +280,7 @@ function AnswerBlock({ a, onFeedback, onAction }: { a: AssistantAnswer; onFeedba
       )}
       {a.disclaimer && <p className="text-xs text-muted">{a.disclaimer}</p>}
       <div className="flex items-center gap-1">
-        <span className="mr-1 text-xs text-muted">{t('assistant.helpful')}</span>
+        <span className="me-1 text-xs text-muted">{t('assistant.helpful')}</span>
         <IconButton label={t('assistant.thumbsUp')} onClick={() => onFeedback('up')} className="size-8">
           <ThumbsUp className="size-4" />
         </IconButton>

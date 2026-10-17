@@ -16,6 +16,25 @@ import { FormDialog, useConfirm } from '@/components/dialog';
 
 const monthOf = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`;
 
+/** ISO currencies with local names; the line's current currency first. */
+function currencyOptions(tag: string, current: string) {
+  let codes: string[] = [];
+  try {
+    codes = (Intl as unknown as { supportedValuesOf(k: string): string[] }).supportedValuesOf('currency');
+  } catch {
+    codes = ['INR', 'USD', 'EUR', 'GBP', 'AED', 'SGD', 'AUD', 'CAD', 'SAR', 'BDT'];
+  }
+  const names = (() => {
+    try {
+      return new Intl.DisplayNames([tag, 'en'], { type: 'currency' });
+    } catch {
+      return null;
+    }
+  })();
+  const label = (c: string) => `${c} · ${names?.of(c) ?? c}`;
+  return [current, ...codes.filter((c) => c !== current)].map((c) => ({ value: c, label: label(c) }));
+}
+
 function Inner() {
   const { t, tag } = useI18n();
   const { fmt } = useSession();
@@ -27,13 +46,13 @@ function Inner() {
   const [cursor, setCursor] = useState(() => new Date());
   const month = monthOf(cursor);
   const q = useQuery({ queryKey: ['budgets', month, householdId], queryFn: () => api.get<BudgetLine[]>('/v1/budgets', { month, householdId: householdId || undefined }) });
-  const [form, setForm] = useState<{ id?: string; category: string; plannedAmount: string; spentAmount: string; note: string } | null>(null);
+  const [form, setForm] = useState<{ id?: string; category: string; plannedAmount: string; spentAmount: string; note: string; currency: string } | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ['budgets'] });
   const remove = useAction((id: string) => api.del(`/v1/budgets/${id}`), { onSuccess: refresh });
   const lines = q.data ?? [];
   const planned = lines.reduce((s, l) => s + Number(l.plannedAmount), 0);
   const spent = lines.reduce((s, l) => s + Number(l.spentAmount), 0);
-  const currency = lines[0]?.currency ?? 'INR';
+  const currency = lines[0]?.currency ?? fmt.currency;
 
   return (
     <div className="max-w-3xl">
@@ -41,7 +60,7 @@ function Inner() {
         title={t('nav.budgets')}
         description={t('budgets.intro')}
         actions={
-          <Button icon={<Plus className="size-4" />} onClick={() => setForm({ category: '', plannedAmount: '', spentAmount: '', note: '' })}>
+          <Button icon={<Plus className="size-4" />} onClick={() => setForm({ category: '', plannedAmount: '', spentAmount: '', note: '', currency })}>
             {t('budgets.addLine')}
           </Button>
         }
@@ -52,11 +71,11 @@ function Inner() {
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Button variant="secondary" size="sm" aria-label={t('common.back')} onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}>
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="flip-rtl size-4" />
           </Button>
           <span className="min-w-[9rem] text-center font-semibold">{new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric' }).format(cursor)}</span>
           <Button variant="secondary" size="sm" aria-label={t('common.next')} onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}>
-            <ChevronRight className="size-4" />
+            <ChevronRight className="flip-rtl size-4" />
           </Button>
         </div>
         {(households.data?.length ?? 0) > 0 && (
@@ -72,7 +91,7 @@ function Inner() {
       )}
       {q.isLoading && <LoadingBlock />}
       <ErrorNotice error={q.error} onRetry={q.refetch} />
-      {!q.isLoading && lines.length === 0 && <EmptyState icon={<PiggyBank className="size-6" />} title={t('budgets.empty')} action={<Button onClick={() => setForm({ category: '', plannedAmount: '', spentAmount: '', note: '' })}>{t('budgets.addLine')}</Button>} />}
+      {!q.isLoading && lines.length === 0 && <EmptyState icon={<PiggyBank className="size-6" />} title={t('budgets.empty')} action={<Button onClick={() => setForm({ category: '', plannedAmount: '', spentAmount: '', note: '', currency })}>{t('budgets.addLine')}</Button>} />}
       <div className="space-y-3">
         {lines.map((l) => {
           const p = Number(l.plannedAmount);
@@ -81,7 +100,7 @@ function Inner() {
           return (
             <Card key={l.id} className="px-4 py-3.5">
               <div className="flex items-center gap-3">
-                <button type="button" className="min-w-0 flex-1 text-left" onClick={() => setForm({ id: l.id, category: l.category, plannedAmount: String(p), spentAmount: String(s), note: l.note ?? '' })}>
+                <button type="button" className="min-w-0 flex-1 text-start" onClick={() => setForm({ id: l.id, category: l.category, plannedAmount: String(p), spentAmount: String(s), note: l.note ?? '', currency: l.currency })}>
                   <div className="flex items-baseline justify-between gap-3">
                     <span className="font-semibold">{l.category}</span>
                     <span className="text-sm tabular-nums text-muted">
@@ -108,16 +127,17 @@ function Inner() {
           title={form.id ? t('common.edit') : t('budgets.addLine')}
           disabled={!form.category.trim() || form.plannedAmount === ''}
           onSubmit={async () => {
-            const body = { category: form.category.trim(), plannedAmount: Number(form.plannedAmount), spentAmount: form.spentAmount === '' ? undefined : Number(form.spentAmount), note: form.note.trim() || undefined };
+            const body = { category: form.category.trim(), plannedAmount: Number(form.plannedAmount), spentAmount: form.spentAmount === '' ? undefined : Number(form.spentAmount), note: form.note.trim() || undefined, currency: form.currency };
             if (form.id) await api.patch(`/v1/budgets/${form.id}`, body);
             else await api.post('/v1/budgets', { ...body, month, householdId: householdId || undefined });
             refresh();
           }}
         >
           <Input label={t('common.category')} placeholder={t('budgets.categoryPlaceholder')} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} maxLength={40} autoFocus />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-3">
             <Input label={t('budgets.planned')} inputMode="decimal" value={form.plannedAmount} onChange={(e) => setForm({ ...form, plannedAmount: e.target.value.replace(/[^\d.]/g, '') })} />
             <Input label={t('budgets.spent')} inputMode="decimal" optional value={form.spentAmount} onChange={(e) => setForm({ ...form, spentAmount: e.target.value.replace(/[^\d.]/g, '') })} />
+            <Select label={t('budgets.currency')} value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value })} options={currencyOptions(tag, form.currency)} />
           </div>
           <Input label={t('common.notes')} optional value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} maxLength={200} />
         </FormDialog>

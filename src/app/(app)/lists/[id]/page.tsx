@@ -88,11 +88,11 @@ export default function ListPage() {
       <div className="min-w-0 flex-1">
         <span className={cx('font-medium', item.doneAt && 'text-muted line-through')}>{item.name}</span>
         {item.quantity && (
-          <span className="ml-2 text-sm text-muted">
+          <span className="ms-2 text-sm text-muted">
             {Number(item.quantity)} {item.unit}
           </span>
         )}
-        {item.assignedTo && <Badge className="ml-2" tone="info">{nameOf(item.assignedTo) ?? '…'}</Badge>}
+        {item.assignedTo && <Badge className="ms-2" tone="info">{nameOf(item.assignedTo) ?? '…'}</Badge>}
       </div>
       {!item.doneAt && (
         <IconButton label={t('common.edit')} onClick={() => setEditing(item)}>

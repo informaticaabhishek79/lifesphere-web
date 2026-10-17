@@ -24,7 +24,7 @@ export default function ContactInvitePage() {
           {p.proposedScopes.length > 0 && (
             <div>
               <div className="mb-1.5 text-sm font-semibold">{t('invite.theyOffer', { name: p.inviterName })}</div>
-              <ul className="list-disc space-y-1 pl-5 text-sm text-ink-2">
+              <ul className="list-disc space-y-1 ps-5 text-sm text-ink-2">
                 {p.proposedScopes.map((s) => (
                   <li key={s.scope}>{e('grantScope', s.scope)}</li>
                 ))}

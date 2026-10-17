@@ -404,6 +404,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/countries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DirectoryController_countries_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/users/{id}/card": {
         parameters: {
             query?: never;
@@ -3724,10 +3740,15 @@ export interface components {
             /** @enum {string} */
             channel: "sms" | "email";
             /**
-             * @description Phone number (E.164 or 10-digit Indian) or email address
-             * @example +919876543210
+             * @description Phone number (E.164, or national format with `country`) or email address
+             * @example +447700900123
              */
             destination: string;
+            /**
+             * @description ISO 3166 country used to read a phone number given without +country code. Default IN.
+             * @example GB
+             */
+            country?: string;
         };
         OtpVerifyDto: {
             /** @example Chrome on Windows */
@@ -3743,10 +3764,21 @@ export interface components {
             ageConfirmed?: boolean;
             /** @description Required for new accounts: version of terms + privacy notice accepted */
             acceptedPolicyVersion?: string;
-            /** @example Asia/Kolkata */
+            /**
+             * @description New accounts: the device time zone
+             * @example Europe/London
+             */
             timezone?: string;
-            /** @example en-IN */
+            /**
+             * @description New accounts: preferred language
+             * @example en-GB
+             */
             locale?: string;
+            /**
+             * @description New accounts: country of residence (else taken from the phone number or time zone)
+             * @example GB
+             */
+            country?: string;
         };
         MfaVerifyDto: {
             /** @description mfaToken returned by /auth/otp/verify when two-factor is enabled */
@@ -3773,6 +3805,8 @@ export interface components {
             /** @enum {string} */
             channel: "sms" | "email";
             destination: string;
+            /** @example GB */
+            country?: string;
         };
         ContactVerifyDto: {
             challengeId: string;
@@ -3787,10 +3821,15 @@ export interface components {
         };
         UpdateProfileDto: {
             displayName?: string;
-            /** @example en-IN */
+            /** @example en-GB */
             locale?: string;
-            /** @example Asia/Kolkata */
+            /** @example Europe/London */
             timezone?: string;
+            /**
+             * @description Country of residence (ISO 3166 alpha-2)
+             * @example GB
+             */
+            country?: string;
             seniorMode?: boolean;
             /** @description Appear in community member lists and search */
             discoverable?: boolean;
@@ -4109,7 +4148,10 @@ export interface components {
             category: string;
             plannedAmount: number;
             spentAmount?: number;
-            /** @example INR */
+            /**
+             * @description ISO 4217; defaults to your country’s currency
+             * @example INR
+             */
             currency?: string;
             note?: string;
             householdId?: string;
@@ -4158,7 +4200,7 @@ export interface components {
             daysOfWeek?: string[];
             /** @description For one-off, visit or assistance confirmations */
             oneOffAt?: string;
-            /** @example Asia/Kolkata */
+            /** @example Europe/London */
             timezone?: string;
             /** @default 15 */
             reminderAfterMinutes: number;
@@ -4189,7 +4231,7 @@ export interface components {
             daysOfWeek?: string[];
             /** @description For one-off, visit or assistance confirmations */
             oneOffAt?: string;
-            /** @example Asia/Kolkata */
+            /** @example Europe/London */
             timezone?: string;
             /** @default 15 */
             reminderAfterMinutes: number;
@@ -4564,7 +4606,10 @@ export interface components {
             state: string;
             /** @example IN */
             country?: string;
-            /** @example 110 */
+            /**
+             * @description Start of the postal code (e.g. 3 PIN digits, UK outward code)
+             * @example 110
+             */
             pincodePrefix?: string;
             /** @description Rounded to 2 decimals (~1 km) */
             lat?: string;
@@ -4577,7 +4622,10 @@ export interface components {
             state?: string;
             /** @example IN */
             country?: string;
-            /** @example 110 */
+            /**
+             * @description Start of the postal code (e.g. 3 PIN digits, UK outward code)
+             * @example 110
+             */
             pincodePrefix?: string;
             /** @description Rounded to 2 decimals (~1 km) */
             lat?: string;
@@ -4589,6 +4637,11 @@ export interface components {
             kind: "consumer" | "civic" | "government" | "helpline";
             name: string;
             jurisdiction?: string;
+            /**
+             * @description Country served; leave empty for every country
+             * @example IN
+             */
+            country?: Record<string, never> | null;
             topics?: string[];
             url?: string;
             phone?: string;
@@ -4601,6 +4654,11 @@ export interface components {
             kind?: "consumer" | "civic" | "government" | "helpline";
             name?: string;
             jurisdiction?: string;
+            /**
+             * @description Country served; leave empty for every country
+             * @example IN
+             */
+            country?: Record<string, never> | null;
             topics?: string[];
             url?: string;
             phone?: string;
@@ -4641,6 +4699,11 @@ export interface components {
             /** @example consumer_complaints */
             topic: string;
             language?: string;
+            /**
+             * @description Country the guide applies to; leave empty for general guidance
+             * @example IN
+             */
+            country?: string;
             publishedOn?: string;
             lastReviewedOn?: string;
             disclaimer?: string;
@@ -4652,6 +4715,7 @@ export interface components {
             body?: string;
             canonicalUrl?: string;
             topic?: string;
+            country?: Record<string, never> | null;
             lastReviewedOn?: string;
             disclaimer?: string;
             /** @enum {string} */
@@ -5175,8 +5239,28 @@ export interface operations {
             query?: {
                 search?: string;
                 city?: string;
+                /** @description Start of a postal code */
                 pincodePrefix?: string;
+                /** @description Country (default: your own; "all" for every country) */
+                country?: string;
             };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DirectoryController_countries_v1: {
+        parameters: {
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;

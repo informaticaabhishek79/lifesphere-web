@@ -27,16 +27,21 @@ const PAGES = [
   '/privacy',
 ];
 
-test('every page loads without errors, in English and Hindi', async ({ page }) => {
+test('every page loads without errors, in every language', async ({ page }) => {
+  test.setTimeout(15 * 60_000);
   const errors = watchErrors(page);
   await signIn(page, uniquePhone(), 'Crawl Tester');
-  for (const lang of ['en', 'hi']) {
-    if (lang === 'hi') await page.getByRole('button', { name: /भाषा|Language/ }).first().click();
+  for (const lang of ['en', 'hi', 'bn', 'mr', 'ta', 'te', 'es', 'fr', 'de', 'ar']) {
+    await page.goto('/');
+    await page.locator('header select:has(option[value="ta"])').first().selectOption(lang);
+    await expect(page.locator('html')).toHaveAttribute('lang', new RegExp(`^${lang}`));
     for (const path of PAGES) {
       await page.goto(path);
       await page.waitForLoadState('networkidle');
+      await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
       await expect(page.locator('main h1').first()).toBeVisible();
-      await expect(page.getByText(/Something went wrong|कुछ गड़बड़ हो गई/)).toHaveCount(0);
+      // The error screen has a Reload button; no page should show it.
+      await expect(page.locator('[data-error-boundary]')).toHaveCount(0);
     }
   }
   expect(errors).toEqual([]);

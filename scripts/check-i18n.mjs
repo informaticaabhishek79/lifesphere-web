@@ -1,9 +1,15 @@
-// Lists translation keys used in the code that are missing from the English or Hindi dictionaries.
+// Checks the translations:
+//  1. every key used in code exists in English;
+//  2. every language has every English key (missing keys fall back to English, so this is a coverage report);
+//  3. no language has keys English doesn't (typos);
+//  4. {placeholders} match English exactly.
+// Exit code 1 when 1, 3 or 4 fail, or when Hindi (the launch language) is missing anything.
+// Use --strict to also fail on any missing translation in any language.
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { createRequire } from 'node:module';
 
 const root = new URL('../src/', import.meta.url).pathname;
+const strict = process.argv.includes('--strict');
 const files = [];
 (function walk(d) {
   for (const f of readdirSync(d)) {
@@ -29,12 +35,41 @@ function load(lang) {
   new Function('module', 'exports', src)(m, m.exports);
   return m.exports;
 }
-const get = (o, k) => k.split('.').reduce((a, p) => (a && typeof a === 'object' ? a[p] : undefined), o);
-const en = load('en');
-const hi = load('hi');
-const missingEn = [...used].filter((k) => typeof get(en, k) !== 'string').sort();
-const missingHi = [...used].filter((k) => typeof get(en, k) === 'string' && typeof get(hi, k) !== 'string').sort();
-console.log(`keys used: ${used.size}`);
-console.log(`missing in en (${missingEn.length}):\n  ${missingEn.join('\n  ')}`);
-console.log(`missing in hi (${missingHi.length}):\n  ${missingHi.join('\n  ')}`);
-process.exit(missingEn.length || missingHi.length ? 1 : 0);
+function flatten(o, prefix = '', out = {}) {
+  for (const [k, v] of Object.entries(o)) {
+    const key = prefix ? `${prefix}.${k}` : k;
+    if (v && typeof v === 'object') flatten(v, key, out);
+    else out[key] = v;
+  }
+  return out;
+}
+const vars = (s) => [...String(s).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join(',');
+
+const en = flatten(load('en'));
+const enKeys = Object.keys(en);
+let fail = false;
+
+const missingEn = [...used].filter((k) => typeof en[k] !== 'string').sort();
+console.log(`keys used in code: ${used.size}; English keys: ${enKeys.length}`);
+if (missingEn.length) {
+  fail = true;
+  console.log(`missing in en (${missingEn.length}):\n  ${missingEn.join('\n  ')}`);
+}
+
+const langs = readdirSync(join(root, 'i18n'))
+  .filter((f) => /^[a-z]{2}\.ts$/.test(f) && f !== 'en.ts')
+  .map((f) => f.slice(0, 2))
+  .sort();
+for (const lang of langs) {
+  const d = flatten(load(lang));
+  const missing = enKeys.filter((k) => typeof d[k] !== 'string');
+  const extra = Object.keys(d).filter((k) => !(k in en));
+  const badVars = Object.keys(d).filter((k) => k in en && vars(d[k]) !== vars(en[k]));
+  const pct = Math.round(((enKeys.length - missing.length) / enKeys.length) * 100);
+  console.log(`${lang}: ${pct}% translated (${missing.length} missing, ${extra.length} unknown, ${badVars.length} placeholder mismatches)`);
+  if (extra.length) console.log(`  unknown keys:\n    ${extra.join('\n    ')}`);
+  if (badVars.length) console.log(`  placeholder mismatches:\n    ${badVars.map((k) => `${k}: "${d[k]}" vs "${en[k]}"`).join('\n    ')}`);
+  if ((lang === 'hi' || strict) && missing.length) console.log(`  missing:\n    ${missing.join('\n    ')}`);
+  if (extra.length || badVars.length || ((lang === 'hi' || strict) && missing.length)) fail = true;
+}
+process.exit(fail ? 1 : 0);

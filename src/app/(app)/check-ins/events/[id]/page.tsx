@@ -52,12 +52,12 @@ export default function CheckInEventPage() {
       <div className="space-y-5">
         <Card>
           <CardBody className="pt-5">
-            <ol className="relative space-y-4 border-l-2 border-line pl-5">
+            <ol className="relative space-y-4 border-s-2 border-line ps-5">
               {steps
                 .filter((s) => s.at)
                 .map((s) => (
                   <li key={s.label} className="relative">
-                    <span className="absolute top-1.5 -left-[1.62rem] size-3 rounded-full border-2 border-surface bg-brand" />
+                    <span className="absolute top-1.5 -start-[1.62rem] size-3 rounded-full border-2 border-surface bg-brand" />
                     <div className="font-medium">{s.label}</div>
                     <div className="text-sm text-muted">{fmt.dateTime(s.at)}</div>
                   </li>

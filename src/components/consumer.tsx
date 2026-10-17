@@ -28,7 +28,7 @@ export function ChannelCard({ c }: { c: OfficialChannel }) {
           )}
           {c.phone && (
             <a href={`tel:${c.phone}`} className="inline-flex items-center gap-1 font-semibold text-brand">
-              <Phone className="size-4" /> {c.phone}
+              <Phone className="size-4" /> <bdi dir="ltr">{c.phone}</bdi>
             </a>
           )}
         </div>

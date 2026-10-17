@@ -49,8 +49,8 @@ function Inner() {
       />
       <div className="mb-3 grid gap-3 sm:grid-cols-3">
         <div className="relative">
-          <Search className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted" />
-          <Input aria-label={t('common.search')} placeholder={t('services.searchPlaceholder')} value={search} onChange={(ev) => setSearch(ev.target.value)} className="pl-9" />
+          <Search className="pointer-events-none absolute top-3.5 start-3 size-4 text-muted" />
+          <Input aria-label={t('common.search')} placeholder={t('services.searchPlaceholder')} value={search} onChange={(ev) => setSearch(ev.target.value)} className="ps-9" />
         </div>
         <Select aria-label={t('common.category')} value={categoryId} onChange={(ev) => setCategoryId(ev.target.value)} placeholder={t('tasks.allCategories')} options={(categories.data ?? []).filter((c) => c.active).map((c) => ({ value: c.id, label: c.name }))} />
         <Select aria-label={t('settings.locality')} value={localityId} onChange={(ev) => setLocalityId(ev.target.value)} placeholder={t('services.anywhere')} options={(localities.data ?? []).map((l) => ({ value: l.id, label: `${l.name}, ${l.city}` }))} />

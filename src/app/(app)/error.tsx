@@ -12,6 +12,7 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
     console.error(error);
   }, [error]);
   return (
+    <div data-error-boundary>
     <EmptyState
       title={t('common.somethingWrong')}
       body={error.digest ? `Ref: ${error.digest}` : undefined}
@@ -26,5 +27,6 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
         </div>
       }
     />
+    </div>
   );
 }

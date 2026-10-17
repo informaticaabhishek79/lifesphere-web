@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { api } from '@/lib/api';
 import { useAction, usePaged } from '@/lib/hooks';
 import { useSession } from '@/lib/session';
+import { useCountryOptions } from '@/lib/countries';
 import { useI18n } from '@/i18n';
 import { Badge, Button, LoadingBlock, LoadMore, Notice, PageHeader, Tabs } from '@/components/ui';
 import { Select } from '@/components/form';
@@ -37,6 +38,7 @@ interface ArticleRow {
 type Tab = 'articles' | 'due' | 'sources';
 
 export default function AdminKnowledge() {
+  const countryOptions = useCountryOptions('en');
   const { e } = useI18n();
   const { fmt } = useSession();
   const qc = useQueryClient();
@@ -63,10 +65,13 @@ export default function AdminKnowledge() {
     { name: 'reliabilityNote', label: 'Reliability note', type: 'textarea' },
     { name: 'active', label: 'Active', type: 'checkbox' },
   ];
+  const countryList = countryOptions.map((c) => ({ value: c.code, label: `${c.flag} ${c.name}` }));
   const ARTICLE_FIELDS: FieldSpec[] = [
     { name: 'sourceId', label: 'Source', type: 'select', required: true, createOnly: true, options: (sources.data ?? []).map((s) => ({ value: s.id, label: s.name })) },
     { name: 'title', label: 'Title', required: true },
     { name: 'topic', label: 'Topic', required: true, hint: 'e.g. consumer, utilities, safety' },
+    { name: 'country', label: 'Country', type: 'select', options: countryList, hint: 'Leave empty for general guidance shown in every country' },
+    { name: 'language', label: 'Language code', createOnly: true, hint: 'e.g. en, hi, es, ar' },
     { name: 'summary', label: 'Summary', type: 'textarea' },
     { name: 'body', label: 'Body (plain text)', type: 'textarea', hint: 'Leave empty and give a URL to fetch from instead.' },
     { name: 'fetchUrl', label: 'Fetch body from URL', createOnly: true, hint: 'The page text is fetched and stored as a draft.' },
@@ -82,7 +87,7 @@ export default function AdminKnowledge() {
   };
 
   const articleCols = [
-    { key: 'title', label: 'Title', render: (r: ArticleRow) => <button type="button" className="text-left font-medium text-brand" onClick={() => openArticle(r)}>{r.title}</button> },
+    { key: 'title', label: 'Title', render: (r: ArticleRow) => <button type="button" className="text-start font-medium text-brand" onClick={() => openArticle(r)}>{r.title}</button> },
     { key: 'topic', label: 'Topic' },
     { key: 'source', label: 'Source', render: (r: ArticleRow) => sourceName(r.sourceId) },
     { key: 'lastReviewedOn', label: 'Reviewed', render: (r: ArticleRow) => (r.lastReviewedOn ? fmt.day(r.lastReviewedOn) : <Badge tone="warn">Never</Badge>) },

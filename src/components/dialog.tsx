@@ -53,7 +53,7 @@ export function Dialog({
               <h2 className="font-display text-xl font-semibold">{title}</h2>
               {description && <p className="mt-1 text-sm text-muted">{description}</p>}
             </div>
-            <button type="button" onClick={onClose} aria-label={t('common.close')} className="-mr-1 rounded-lg p-1.5 text-muted hover:bg-bg-2 hover:text-ink">
+            <button type="button" onClick={onClose} aria-label={t('common.close')} className="-me-1 rounded-lg p-1.5 text-muted hover:bg-bg-2 hover:text-ink">
               <X className="size-5" />
             </button>
           </div>

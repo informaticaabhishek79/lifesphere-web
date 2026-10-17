@@ -1,6 +1,10 @@
 # LifeSphere — web app
 
-Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS 4. English and Hindi.
+Next.js 16 (App Router) + React 19 + TypeScript + Tailwind CSS 4.
+
+**Languages:** English, Hindi, Bengali, Marathi, Tamil, Telugu, Spanish, French, German and Arabic (right-to-left). The first visit follows the browser's language; anyone can switch from the globe menu at the top or in Settings, and the choice is saved to their account. Translations were machine-assisted — have a native speaker review each one before launch.
+
+**Countries:** the sign-in screen guesses the visitor's country from their time zone and browser (changeable with the flag picker) and checks the phone number for that country. Dates, numbers and money follow the person's language and country.
 
 ## Run it (Windows, macOS, Linux)
 
@@ -13,7 +17,7 @@ npm run setup          # creates .env.local (API_URL=http://localhost:4000)
 npm run dev            # http://localhost:3008
 ```
 
-Sign in with any mobile number. In development the API shows the one-time code on the sign-in screen ("Test mode code").
+Sign in with any mobile number (pick the country with the flag first; for India just type the 10 digits). In development the API shows the one-time code on the sign-in screen ("Test mode code").
 
 Want screens full of sample data? With the API running in development:
 
@@ -35,6 +39,10 @@ Want the data in **your own account**? Run `npm run demo-data -- --phone=<your 1
 
 The script approves the two providers through the staff console API. If the admin has no authenticator yet, it sets one up and prints the key to add to your authenticator app; if it already has one, pass `ADMIN_TOTP_SECRET=<key>` or approve the providers yourself in **Staff console → Providers** and run `npm run demo-data -- --force`. New sharing takes effect after the API's cooling-off period (`GRANT_COOLOFF_MINUTES`, 10 by default).
 
+## Adding or editing text
+
+All text is in `src/i18n/`: `en.ts` is the source; each other language file has the same keys and falls back to English for anything missing. Keep `{placeholders}` exactly as in English. To add a language: create `xx.ts`, add it to `LOCALES` in `locales.ts` and to `load.ts`, then run `npm run check:i18n -- --strict`. Right-to-left languages work automatically when their `dir` is `'rtl'` (layouts use start/end spacing, not left/right).
+
 ## How it talks to the API
 
 The browser never calls the API directly and never sees a token.
@@ -53,7 +61,7 @@ Request bodies are typed from the API's OpenAPI document, kept here as `openapi.
 | `npm run setup` | Create `.env.local` (`-- --api=<url>` to point at another API) |
 | `npm run dev` / `build` / `start` | Develop / production build / serve the build (`PORT` respected) |
 | `npm run typecheck` | Strict TypeScript |
-| `npm run check:i18n` | Every text key used in code exists in English **and** Hindi |
+| `npm run check:i18n` | Every text key used in code exists in English and Hindi, no language has unknown keys or broken `{placeholders}`, and coverage per language. `-- --strict` (used in CI) also fails if any language is missing a key |
 | `npm run api:pull` | Copy the API's latest `openapi.json` into this repo |
 | `npm run api:types` | Regenerate request types from `openapi.json` |
 | `npm run demo-data` | Fill a development API with sample people and content |
@@ -84,7 +92,7 @@ npx playwright install chromium     # once
 npm run test:e2e
 ```
 
-- `crawl.spec.ts` opens every screen in English and Hindi and fails on any error. Set `DEMO_PHONE=+919810000002` after `npm run demo-data` to also open detail pages with data.
+- `crawl.spec.ts` opens every screen in all ten languages, checks right-to-left for Arabic, and fails on any error. Set `DEMO_PHONE=+919810000002` after `npm run demo-data` to also open detail pages with data.
 - `flows.spec.ts` drives real flows: tasks, reminders, calendar, household, lists, inventory, budget; a contact invitation between two people, sharing with cooling-off, check-ins and the help button end to end; community posts and comments, a consumer case with an AI draft, civic issue, provider profile, service request and the assistant.
 - `admin.spec.ts` signs in the seeded admin with two-step verification and opens every staff screen.
 

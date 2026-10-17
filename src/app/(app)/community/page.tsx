@@ -97,8 +97,8 @@ function Groups() {
     <>
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <div className="relative min-w-[14rem] flex-1">
-          <Search className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted" />
-          <Input aria-label={t('common.search')} placeholder={t('community.searchGroups')} value={search} onChange={(ev) => setSearch(ev.target.value)} className="pl-9" />
+          <Search className="pointer-events-none absolute top-3.5 start-3 size-4 text-muted" />
+          <Input aria-label={t('common.search')} placeholder={t('community.searchGroups')} value={search} onChange={(ev) => setSearch(ev.target.value)} className="ps-9" />
         </div>
         <Button icon={<Plus className="size-4" />} onClick={() => setOpen(true)}>
           {t('community.newGroup')}

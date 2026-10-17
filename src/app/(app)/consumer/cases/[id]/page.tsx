@@ -167,10 +167,10 @@ export default function CasePage() {
             {c.timeline.length === 0 ? (
               <p className="text-sm text-muted">{t('common.emptyList')}</p>
             ) : (
-              <ol className="relative space-y-4 border-l-2 border-line pl-5">
+              <ol className="relative space-y-4 border-s-2 border-line ps-5">
                 {c.timeline.map((x) => (
                   <li key={x.id} className="relative">
-                    <span className="absolute top-1.5 -left-[1.62rem] size-3 rounded-full border-2 border-surface bg-accent" />
+                    <span className="absolute top-1.5 -start-[1.62rem] size-3 rounded-full border-2 border-surface bg-accent" />
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="text-sm text-muted">
@@ -214,7 +214,7 @@ export default function CasePage() {
                 {c.attachments
                   .filter((a) => a.temporary)
                   .map((a) => (
-                    <button key={a.id} type="button" className="ml-1 font-semibold underline" onClick={() => keep.mutate(a.id)}>
+                    <button key={a.id} type="button" className="ms-1 font-semibold underline" onClick={() => keep.mutate(a.id)}>
                       {t('consumer.keep', { name: a.originalName })}
                     </button>
                   ))}
@@ -223,7 +223,7 @@ export default function CasePage() {
             {checklist.data && (
               <div className="rounded-xl bg-surface-2 p-4">
                 <div className="mb-2 text-sm font-semibold">{t('consumer.checklist')}</div>
-                <ul className="list-disc space-y-1 pl-5 text-sm text-ink-2">
+                <ul className="list-disc space-y-1 ps-5 text-sm text-ink-2">
                   {checklist.data.items.map((i) => (
                     <li key={i}>{i}</li>
                   ))}

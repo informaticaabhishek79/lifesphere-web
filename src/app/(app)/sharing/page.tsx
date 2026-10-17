@@ -142,7 +142,7 @@ function Inner() {
               {who.data?.people.map((p) => (
                 <li key={p.granteeId} className="py-3">
                   <div className="font-semibold">{p.name}</div>
-                  <ul className="mt-1 list-disc pl-5 text-sm text-ink-2">
+                  <ul className="mt-1 list-disc ps-5 text-sm text-ink-2">
                     {p.access.map((a) => (
                       <li key={a}>{a}</li>
                     ))}

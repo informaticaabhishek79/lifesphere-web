@@ -83,7 +83,7 @@ function Inbox() {
         {list.items.map((n) => (
           <li key={n.id} className={cx('card flex items-start gap-3 px-4 py-3.5', !n.readAt && 'border-brand/40 bg-brand-softer')}>
             <span className={cx('mt-1.5 size-2.5 shrink-0 rounded-full', n.readAt ? 'bg-transparent' : n.category === 'help' ? 'bg-danger' : 'bg-accent')} aria-hidden />
-            <button type="button" className="min-w-0 flex-1 text-left" onClick={() => open(n)}>
+            <button type="button" className="min-w-0 flex-1 text-start" onClick={() => open(n)}>
               <div className="flex flex-wrap items-center gap-2">
                 <span className={cx('font-semibold', n.category === 'help' && 'text-danger')}>{n.title}</span>
                 <Badge tone={n.category === 'help' || n.category === 'security' ? 'danger' : 'neutral'}>{e('notificationCategory', n.category)}</Badge>
@@ -126,8 +126,8 @@ function Prefs() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[36rem] text-sm">
               <thead>
-                <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                  <th className="py-2 pr-3 font-semibold">{t('common.category')}</th>
+                <tr className="border-b border-line text-start text-xs uppercase tracking-wide text-muted">
+                  <th className="py-2 pe-3 font-semibold">{t('common.category')}</th>
                   {cols.map((c) => (
                     <th key={c.key} className="px-2 py-2 text-center font-semibold">
                       {c.label}
@@ -138,7 +138,7 @@ function Prefs() {
               <tbody className="divide-y divide-line">
                 {q.data.map((p) => (
                   <tr key={p.category}>
-                    <td className="py-2.5 pr-3 font-medium">{e('notificationCategory', p.category)}</td>
+                    <td className="py-2.5 pe-3 font-medium">{e('notificationCategory', p.category)}</td>
                     {cols.map((c) => (
                       <td key={c.key} className="px-2 py-2.5 text-center">
                         <input

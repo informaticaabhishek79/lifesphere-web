@@ -126,11 +126,11 @@ export default function CalendarPage() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Button variant="secondary" size="sm" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))} aria-label={t('common.back')}>
-            <ChevronLeft className="size-4" />
+            <ChevronLeft className="flip-rtl size-4" />
           </Button>
           <h2 className="min-w-[10rem] text-center text-lg font-semibold">{new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric' }).format(first)}</h2>
           <Button variant="secondary" size="sm" onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))} aria-label={t('common.next')}>
-            <ChevronRight className="size-4" />
+            <ChevronRight className="flip-rtl size-4" />
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setCursor(new Date())}>
             {t('common.today')}
@@ -172,7 +172,7 @@ export default function CalendarPage() {
                     setEditingId(null);
                     setForm(blank(s));
                   }}
-                  className={cx('flex min-h-[5.5rem] flex-col items-stretch justify-start border-r border-b border-line p-1.5 text-left transition-colors hover:bg-surface-2 sm:min-h-[7rem]', !inMonth && 'bg-bg/60 text-muted')}
+                  className={cx('flex min-h-[5.5rem] flex-col items-stretch justify-start border-e border-b border-line p-1.5 text-start transition-colors hover:bg-surface-2 sm:min-h-[7rem]', !inMonth && 'bg-bg/60 text-muted')}
                 >
                   <span className={cx('inline-flex size-7 items-center justify-center rounded-full text-sm font-semibold', k === today && 'bg-brand text-brand-ink')}>{d.getDate()}</span>
                   <div className="mt-1 space-y-1">
@@ -209,7 +209,7 @@ export default function CalendarPage() {
           {upcoming.length === 0 && <li className="rounded-xl bg-surface-2 px-4 py-8 text-center text-muted">{t('calendar.empty')}</li>}
           {upcoming.map((ev) => (
             <li key={`${ev.id}-${ev.occurrenceStart}`}>
-              <button type="button" onClick={() => setSelected(ev)} className="card flex w-full items-center gap-4 px-4 py-3 text-left hover:border-line-strong">
+              <button type="button" onClick={() => setSelected(ev)} className="card flex w-full items-center gap-4 px-4 py-3 text-start hover:border-line-strong">
                 <div className="w-20 shrink-0 text-center">
                   <div className="text-xs font-semibold uppercase text-accent">{fmt.date(ev.occurrenceStart ?? ev.startsAt, { weekday: 'short' })}</div>
                   <div className="text-2xl font-bold">{fmt.date(ev.occurrenceStart ?? ev.startsAt, { day: 'numeric' })}</div>

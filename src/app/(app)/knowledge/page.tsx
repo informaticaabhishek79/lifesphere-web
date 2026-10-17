@@ -9,12 +9,13 @@ import { api } from '@/lib/api';
 import { usePaged } from '@/lib/hooks';
 import { useSession } from '@/lib/session';
 import type { ArticleSummary } from '@/lib/types';
-import { useI18n, humanize } from '@/i18n';
+import { useI18n } from '@/i18n';
+import { countryName, flagOf } from '@/lib/countries';
 import { Badge, ButtonLink, cx, EmptyState, ErrorNotice, LoadingBlock, LoadMore, Notice, PageHeader } from '@/components/ui';
 import { Input } from '@/components/form';
 
 function Inner() {
-  const { t } = useI18n();
+  const { t, e, locale } = useI18n();
   const { fmt, featureOn } = useSession();
   const params = useSearchParams();
   const [search, setSearch] = useState(params.get('q') ?? '');
@@ -30,8 +31,8 @@ function Inner() {
     <div className="max-w-3xl">
       <PageHeader title={t('nav.knowledge')} description={t('knowledge.intro')} actions={featureOn('assistant') ? <ButtonLink href="/assistant" variant="secondary">{t('knowledge.askAssistant')}</ButtonLink> : undefined} />
       <div className="relative mb-3">
-        <Search className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted" />
-        <Input aria-label={t('common.search')} placeholder={t('knowledge.searchPlaceholder')} value={search} onChange={(ev) => setSearch(ev.target.value)} className="pl-9" />
+        <Search className="pointer-events-none absolute top-3.5 start-3 size-4 text-muted" />
+        <Input aria-label={t('common.search')} placeholder={t('knowledge.searchPlaceholder')} value={search} onChange={(ev) => setSearch(ev.target.value)} className="ps-9" />
       </div>
       <div className="mb-5 flex flex-wrap gap-2">
         <button type="button" onClick={() => setTopic('')} className={cx('rounded-full border px-3 py-1 text-sm font-semibold', !topic ? 'border-brand bg-brand text-brand-ink' : 'border-line')}>
@@ -41,7 +42,7 @@ function Inner() {
           ?.filter((x) => x.topic)
           .map((x) => (
             <button key={x.topic} type="button" onClick={() => setTopic(x.topic!)} className={cx('rounded-full border px-3 py-1 text-sm font-semibold', topic === x.topic ? 'border-brand bg-brand text-brand-ink' : 'border-line')}>
-              {humanize(x.topic!)} <span className="opacity-60">{x.count}</span>
+              {e('topic', x.topic!)} <span className="opacity-60">{x.count}</span>
             </button>
           ))}
       </div>
@@ -56,7 +57,12 @@ function Inner() {
               <div className="font-semibold">{a.title}</div>
               {a.summary && <p className="mt-0.5 line-clamp-2 text-sm text-muted">{a.summary}</p>}
               <div className="mt-1.5 flex flex-wrap gap-2 text-xs">
-                {a.topic && <Badge>{humanize(a.topic)}</Badge>}
+                {a.topic && <Badge>{e('topic', a.topic)}</Badge>}
+                {a.country && (
+                  <Badge tone="info">
+                    {flagOf(a.country)} {countryName(a.country, locale)}
+                  </Badge>
+                )}
                 {a.lastReviewedOn && <span className="text-muted">{t('assistant.reviewed', { date: fmt.day(a.lastReviewedOn) })}</span>}
               </div>
             </Link>

@@ -7,7 +7,8 @@ import { api } from '@/lib/api';
 import { useAction, usePaged } from '@/lib/hooks';
 import { applyAppearance, useSession } from '@/lib/session';
 import type { ActivityItem, Feature, Locality, Me, MfaStatus, OtpChallenge, Preferences, SessionInfo, Theme } from '@/lib/types';
-import { LOCALES, useI18n } from '@/i18n';
+import { LANGUAGE_OPTIONS, useI18n, type Locale } from '@/i18n';
+import { useCountryOptions } from '@/lib/countries';
 import { Badge, Button, Card, CardBody, CardHeader, ErrorNotice, List, ListItem, LoadingBlock, LoadMore, Notice, PageHeader, Tabs } from '@/components/ui';
 import { Input, Segmented, Select, Switch, Textarea } from '@/components/form';
 import { FormDialog, useConfirm, useToast } from '@/components/dialog';
@@ -15,7 +16,14 @@ import { useReauth } from '@/components/reauth';
 
 type Tab = 'profile' | 'appearance' | 'notifications' | 'widgets' | 'features' | 'security' | 'activity';
 const FEATURES: Feature[] = ['lifeos', 'household', 'familycare', 'community', 'consumer', 'services', 'assistant'];
-const TIMEZONES = ['Asia/Kolkata', 'Asia/Dubai', 'Asia/Singapore', 'Europe/London', 'America/New_York', 'America/Los_Angeles', 'Australia/Sydney', 'UTC'];
+/** Every IANA time zone the browser knows (falls back to a short list on very old browsers). */
+const TIMEZONES: string[] = (() => {
+  try {
+    return (Intl as unknown as { supportedValuesOf(k: string): string[] }).supportedValuesOf('timeZone');
+  } catch {
+    return ['UTC', 'Asia/Kolkata', 'Asia/Dubai', 'Asia/Singapore', 'Europe/London', 'Europe/Berlin', 'America/New_York', 'America/Los_Angeles', 'Australia/Sydney'];
+  }
+})();
 
 function usePrefsSaver() {
   const qc = useQueryClient();
@@ -78,11 +86,16 @@ function ProfileTab() {
     bio: me.profile.bio ?? '',
     localityId: me.profile.locality?.id ?? '',
     timezone: me.profile.timezone,
+    country: me.profile.country ?? '',
     seniorMode: me.profile.seniorMode,
     discoverable: me.profile.discoverable,
   });
+  const countries = useCountryOptions(locale);
   const [localitySearch, setLocalitySearch] = useState('');
-  const localities = useQuery({ queryKey: ['localities', localitySearch], queryFn: () => api.get<Locality[]>('/v1/localities', { search: localitySearch || undefined }) });
+  const localities = useQuery({
+    queryKey: ['localities', form.country, localitySearch],
+    queryFn: () => api.get<Locality[]>('/v1/localities', { search: localitySearch || undefined, country: form.country || 'all' }),
+  });
   const save = useAction(
     () =>
       api.patch<Me>('/v1/me/profile', {
@@ -90,6 +103,7 @@ function ProfileTab() {
         bio: form.bio.trim() || null,
         localityId: form.localityId || null,
         timezone: form.timezone,
+        ...(form.country ? { country: form.country } : {}),
         seniorMode: form.seniorMode,
         discoverable: form.discoverable,
       }),
@@ -109,14 +123,34 @@ function ProfileTab() {
       <CardBody className="space-y-5 pt-5">
         <Input label={t('settings.displayName')} value={form.displayName} maxLength={80} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
         <Textarea label={t('settings.bio')} hint={t('settings.bioHint')} optional value={form.bio} maxLength={280} onChange={(e) => setForm({ ...form, bio: e.target.value })} />
+        <Select
+          label={t('settings.country')}
+          hint={t('settings.countryHint')}
+          value={form.country}
+          placeholder={t('common.none')}
+          onChange={(e) => {
+            const code = e.target.value;
+            // A new country usually means a new time zone and neighbourhood (both stay editable).
+            const zoneCountry = (tz: string) => countries.find((c) => c.timezone === tz)?.code;
+            const browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const timezone =
+              zoneCountry(form.timezone) === code || !zoneCountry(form.timezone)
+                ? form.timezone
+                : zoneCountry(browserTz) === code
+                  ? browserTz
+                  : (countries.find((c) => c.code === code)?.timezone ?? form.timezone);
+            setForm({ ...form, country: code, localityId: '', timezone });
+          }}
+          options={countries.map((c) => ({ value: c.code, label: `${c.flag} ${c.name}` }))}
+        />
         <div className="grid gap-4 sm:grid-cols-2">
-          <Input label={t('common.search')} value={localitySearch} onChange={(e) => setLocalitySearch(e.target.value)} placeholder="Dwarka, Koramangala…" />
+          <Input label={t('common.search')} value={localitySearch} onChange={(e) => setLocalitySearch(e.target.value)} placeholder={t('settings.localitySearchPlaceholder')} />
           <Select
             label={t('settings.locality')}
             value={form.localityId}
             onChange={(e) => setForm({ ...form, localityId: e.target.value })}
             placeholder={t('common.none')}
-            options={localityOptions.map((l) => ({ value: l.id, label: `${l.name}, ${l.city}` }))}
+            options={localityOptions.map((l) => ({ value: l.id, label: `${l.name}, ${l.city}${l.country && l.country !== form.country ? ` (${l.country})` : ''}` }))}
           />
         </div>
         <p className="-mt-3 text-[0.82rem] text-muted">{t('settings.localityHint')}</p>
@@ -126,14 +160,14 @@ function ProfileTab() {
             label={t('common.language')}
             value={locale}
             onChange={(e) => {
-              const l = e.target.value as 'en' | 'hi';
-              setLocale(l);
+              const l = e.target.value as Locale;
+              void setLocale(l);
               api
-                .patch<Me>('/v1/me/profile', { locale: LOCALES.find((x) => x.code === l)!.tag })
+                .patch<Me>('/v1/me/profile', { locale: l })
                 .then((m) => qc.setQueryData(['me'], m))
                 .catch(() => toast(t('common.somethingWrong'), 'danger'));
             }}
-            options={LOCALES.map((l) => ({ value: l.code, label: l.label }))}
+            options={LANGUAGE_OPTIONS}
           />
         </div>
         <div className="space-y-3 rounded-xl bg-surface-2 p-4">
@@ -243,7 +277,7 @@ function NotificationsTab() {
         </div>
         <div className="border-t border-line pt-5">
           <a href="/notifications?tab=settings" className="font-semibold text-brand">
-            {t('notifications.preferences')} →
+            {t('notifications.preferences')} <span aria-hidden className="flip-rtl inline-block">→</span>
           </a>
         </div>
       </CardBody>
@@ -355,7 +389,7 @@ function SecurityTab() {
             <div key={ch} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-surface-2 px-4 py-3">
               <div>
                 <div className="text-sm text-muted">{label}</div>
-                <div className="font-medium">{value ?? '—'}</div>
+                <div className="font-medium"><bdi dir="ltr">{value ?? '—'}</bdi></div>
               </div>
               <div className="flex items-center gap-2">
                 {value && <Badge tone={verified ? 'ok' : 'warn'}>{verified ? t('settings.verified') : t('settings.notVerified')}</Badge>}
@@ -522,7 +556,7 @@ function SecurityTab() {
           <div className="text-xs font-semibold uppercase text-muted">{t('settings.mfaSecret')}</div>
           <code className="mt-1 block font-mono text-lg tracking-wider break-all select-all">{setup?.secret.replace(/(.{4})/g, '$1 ').trim()}</code>
           <a href={setup?.otpauthUrl} className="mt-2 inline-block text-sm font-semibold text-brand">
-            {t('common.open')} →
+            {t('common.open')} <span aria-hidden className="flip-rtl inline-block">→</span>
           </a>
         </div>
         <Input label={t('auth.mfaCode')} inputMode="numeric" maxLength={6} value={totp} onChange={(e) => setTotp(e.target.value.replace(/\D/g, ''))} />
@@ -549,7 +583,7 @@ function ActivityTab() {
               .map(([k, v]) => `${k}: ${String(v)}`)
               .join(' · ')}
             trailing={
-              <div className="text-right text-sm">
+              <div className="text-end text-sm">
                 <div className="text-muted">{fmt.dateTime(a.createdAt)}</div>
                 <Badge tone={a.byMe ? 'neutral' : a.actorType === 'system' ? 'info' : 'accent'}>
                   {a.byMe ? t('settings.byMe') : a.actorType === 'system' ? t('settings.bySystem') : t('settings.byOther')}

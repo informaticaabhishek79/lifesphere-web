@@ -32,11 +32,13 @@ import {
   UserRound,
   Users,
   X,
+  Globe,
+  ChevronDown,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import type { Feature } from '@/lib/types';
-import { useI18n } from '@/i18n';
+import { LOCALES, useI18n, type Locale } from '@/i18n';
 import { Logo } from './brand';
 import { Avatar, cx } from './ui';
 
@@ -173,20 +175,32 @@ function useIntegrations() {
 function LanguageSwitch() {
   const { t, locale, setLocale } = useI18n();
   const qc = useQueryClient();
+  const current = LOCALES.find((l) => l.code === locale);
   return (
-    <button
-      type="button"
-      onClick={() => {
-        const next = locale === 'en' ? 'hi' : 'en';
-        setLocale(next);
-        // Remember on the account too, so notifications use the same language.
-        api.patch('/v1/me/profile', { locale: next === 'hi' ? 'hi-IN' : 'en-IN' }).then(() => qc.invalidateQueries({ queryKey: ['me'] })).catch(() => {});
-      }}
-      className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-ink-2 hover:bg-bg-2"
-      aria-label={t('common.language')}
-    >
-      {t('shell.switchLanguage')}
-    </button>
+    <label className="relative flex shrink-0 cursor-pointer items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm font-semibold text-ink-2 focus-within:ring-2 focus-within:ring-brand/40 hover:bg-bg-2">
+      <Globe className="size-4 shrink-0" aria-hidden />
+      <span aria-hidden className="sm:hidden">{locale.toUpperCase()}</span>
+      <span aria-hidden className="hidden max-w-[8rem] truncate sm:inline">{current?.label}</span>
+      <ChevronDown className="size-3.5 shrink-0 opacity-70" aria-hidden />
+      {/* The native select sits invisibly on top, so the platform's own picker opens on every device. */}
+      <select
+        aria-label={t('common.language')}
+        value={locale}
+        onChange={(e) => {
+          const next = e.target.value as Locale;
+          void setLocale(next);
+          // Remember on the account too, so notifications use the same language.
+          api.patch('/v1/me/profile', { locale: next }).then(() => qc.invalidateQueries({ queryKey: ['me'] })).catch(() => {});
+        }}
+        className="absolute inset-0 cursor-pointer opacity-0"
+      >
+        {LOCALES.map((l) => (
+          <option key={l.code} value={l.code}>
+            {l.label}
+          </option>
+        ))}
+      </select>
+    </label>
   );
 }
 
@@ -210,7 +224,7 @@ function UserMenu() {
       <Avatar name={me.profile.displayName} size="sm" />
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-semibold">{me.profile.displayName}</div>
-        <div className="truncate text-xs text-muted">{me.phoneMasked ?? me.emailMasked}</div>
+        <div className="truncate text-xs text-muted"><bdi dir="ltr">{me.phoneMasked ?? me.emailMasked}</bdi></div>
       </div>
       <button type="button" onClick={signOut} className="rounded-lg p-1.5 text-muted hover:bg-bg-2 hover:text-ink" aria-label={t('common.signOut')} title={t('common.signOut')}>
         <LogOut className="size-4" />
@@ -241,12 +255,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
-      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2">
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2">
         {t('common.skipToContent')}
       </a>
 
       {/* Sidebar */}
-      <aside className="sticky top-0 hidden h-dvh flex-col border-r border-line bg-surface-2 lg:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col border-e border-line bg-surface-2 lg:flex">
         <div className="px-5 pt-5 pb-4">
           <Link href="/" aria-label="LifeSphere home">
             <Logo />
@@ -263,11 +277,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-col">
         {/* Top bar */}
         <header className="sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
-          <div className="flex h-15 items-center gap-2 px-4 sm:px-6">
+          <div className="flex h-15 items-center gap-1 px-3 sm:gap-2 sm:px-6">
             <button type="button" className="rounded-lg p-2 text-ink-2 hover:bg-bg-2 lg:hidden" onClick={() => setDrawer(true)} aria-label={t('common.menu')}>
               <Menu className="size-5" />
             </button>
-            <Link href="/" className="lg:hidden" aria-label="LifeSphere home">
+            <Link href="/" className="hidden sm:block lg:hidden" aria-label="LifeSphere home">
               <Logo withWord={false} />
             </Link>
             <div className="flex-1" />
@@ -275,11 +289,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link href="/notifications" className="relative rounded-lg p-2 text-ink-2 hover:bg-bg-2" aria-label={`${t('nav.notifications')}${unread ? ` (${t('shell.unread', { count: unread })})` : ''}`}>
               <Bell className="size-5" />
               {unread > 0 && (
-                <span className="absolute top-1 right-1 flex min-w-[1.1rem] items-center justify-center rounded-full bg-accent px-1 text-[0.65rem] font-bold text-white">{unread > 99 ? '99+' : unread}</span>
+                <span className="absolute top-1 end-1 flex min-w-[1.1rem] items-center justify-center rounded-full bg-accent px-1 text-[0.65rem] font-bold text-white">{unread > 99 ? '99+' : unread}</span>
               )}
             </Link>
             {featureOn('familycare') && (
-              <Link href="/help" className="ml-1 inline-flex h-10 items-center gap-2 rounded-xl bg-danger px-4 text-sm font-bold text-white shadow-sm hover:bg-danger-hover">
+              <Link href="/help" className="ms-1 inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl bg-danger px-3 text-sm sm:px-4 font-bold text-white shadow-sm hover:bg-danger-hover">
                 <LifeBuoy className="size-4" />
                 {t('shell.getHelp')}
               </Link>
@@ -304,7 +318,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {drawer && (
         <div className="fixed inset-0 z-40 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setDrawer(false)} />
-          <div className="rise absolute inset-y-0 left-0 flex w-[85%] max-w-xs flex-col bg-surface-2 shadow-xl">
+          <div className="rise absolute inset-y-0 start-0 flex w-[85%] max-w-xs flex-col bg-surface-2 shadow-xl">
             <div className="flex items-center justify-between px-5 pt-5 pb-3">
               <Logo />
               <button type="button" onClick={() => setDrawer(false)} className="rounded-lg p-2 hover:bg-bg-2" aria-label={t('common.close')}>
@@ -332,7 +346,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link href={b.href} aria-current={active ? 'page' : undefined} className={cx('relative flex flex-col items-center gap-0.5 py-2 text-[0.7rem] font-semibold', active ? 'text-brand' : 'text-muted')}>
                   <Icon className="size-5" />
                   {b.label}
-                  {'badge' in b && (b.badge ?? 0) > 0 && <span className="absolute top-1 right-[30%] size-2 rounded-full bg-accent" />}
+                  {'badge' in b && (b.badge ?? 0) > 0 && <span className="absolute top-1 end-[30%] size-2 rounded-full bg-accent" />}
                 </Link>
               </li>
             );

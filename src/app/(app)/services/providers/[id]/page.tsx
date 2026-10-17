@@ -46,7 +46,7 @@ export default function ProviderPage() {
             <div className="flex flex-wrap gap-4 text-sm">
               {p.phonePublic && (
                 <a href={`tel:${p.phonePublic}`} className="inline-flex items-center gap-1 font-semibold text-brand">
-                  <Phone className="size-4" /> {p.phonePublic}
+                  <Phone className="size-4" /> <bdi dir="ltr">{p.phonePublic}</bdi>
                 </a>
               )}
               {p.emailPublic && (

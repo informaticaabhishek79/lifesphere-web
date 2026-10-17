@@ -1,5 +1,5 @@
 /** Locale- and time-zone-aware formatting. Times are shown in the user's profile time zone. */
-export function makeFormat(tag: string, timeZone: string) {
+export function makeFormat(tag: string, timeZone: string, defaultCurrency = 'USD') {
   const safe = (fn: () => string, fallback = '') => {
     try {
       return fn();
@@ -43,12 +43,13 @@ export function makeFormat(tag: string, timeZone: string) {
     return date(v);
   };
 
-  const money = (amount: string | number, currency = 'INR') =>
+  /** Amount in the given currency, or the person's local currency. */
+  const money = (amount: string | number, currency: string = defaultCurrency) =>
     safe(() => new Intl.NumberFormat(tag, { style: 'currency', currency, maximumFractionDigits: 2 }).format(Number(amount)), String(amount));
 
   const number = (n: number) => safe(() => new Intl.NumberFormat(tag).format(n), String(n));
 
-  return { date, day, time, dateTime, relativeDay, ago, money, number, timeZone, tag, isToday: (v: string | Date) => dayKey(d(v)) === dayKey(new Date()) };
+  return { date, day, time, dateTime, relativeDay, ago, money, number, timeZone, tag, currency: defaultCurrency, isToday: (v: string | Date) => dayKey(d(v)) === dayKey(new Date()) };
 }
 
 export type Format = ReturnType<typeof makeFormat>;

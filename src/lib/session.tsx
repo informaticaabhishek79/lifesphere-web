@@ -6,7 +6,7 @@ import { createContext, useContext, useEffect, useMemo } from 'react';
 import { api, setUnauthenticatedHandler } from './api';
 import { makeFormat, type Format } from './format';
 import type { Feature, Me } from './types';
-import { useI18n, type Locale } from '@/i18n';
+import { baseLocale, useI18n, type Locale } from '@/i18n';
 
 interface SessionValue {
   me: Me;
@@ -37,11 +37,12 @@ export function applyAppearance(me: Pick<Me, 'preferences' | 'profile'>) {
   const year = 31536000;
   document.cookie = `ls_theme=${theme}; path=/; max-age=${year}; samesite=lax`;
   document.cookie = `ls_scale=${scale}; path=/; max-age=${year}; samesite=lax`;
+  if (me.profile.country) document.cookie = `ls_region=${me.profile.country}; path=/; max-age=${year}; samesite=lax`;
 }
 
 export function SessionProvider({ children, fallback }: { children: React.ReactNode; fallback: React.ReactNode }) {
   const { data: me, refetch, isError, isFetching } = useMeQuery();
-  const { tag, locale, setLocale, t } = useI18n();
+  const { tag, locale, setLocale, setRegion, t } = useI18n();
   const router = useRouter();
   const pathname = usePathname();
   const qc = useQueryClient();
@@ -56,8 +57,9 @@ export function SessionProvider({ children, fallback }: { children: React.ReactN
   useEffect(() => {
     if (!me) return;
     applyAppearance(me);
-    const profileLocale: Locale = me.profile.locale?.startsWith('hi') ? 'hi' : 'en';
-    if (profileLocale !== locale) setLocale(profileLocale);
+    setRegion(me.profile.country ?? null);
+    const profileLocale: Locale = baseLocale(me.profile.locale) ?? 'en';
+    if (profileLocale !== locale) void setLocale(profileLocale);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me]);
 
@@ -65,7 +67,7 @@ export function SessionProvider({ children, fallback }: { children: React.ReactN
     if (!me) return null;
     return {
       me,
-      fmt: makeFormat(tag, me.profile.timezone || 'Asia/Kolkata'),
+      fmt: makeFormat(tag, me.profile.timezone || 'UTC', me.profile.countryDefaults?.currency),
       isStaff: me.staffRoles.length > 0,
       hasRole: (...roles) => me.staffRoles.includes('super_admin') || roles.some((r) => me.staffRoles.includes(r as never)),
       featureOn: (f) => !me.preferences.disabledFeatures.includes(f),

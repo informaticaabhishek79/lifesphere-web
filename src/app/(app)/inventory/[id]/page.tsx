@@ -127,10 +127,10 @@ export default function InventoryItemPage() {
             {item.records.length === 0 ? (
               <p className="text-sm text-muted">{t('inventory.noRecords')}</p>
             ) : (
-              <ol className="relative space-y-4 border-l-2 border-line pl-5">
+              <ol className="relative space-y-4 border-s-2 border-line ps-5">
                 {item.records.map((r) => (
                   <li key={r.id} className="relative">
-                    <span className="absolute top-1.5 -left-[1.62rem] size-3 rounded-full border-2 border-surface bg-brand" />
+                    <span className="absolute top-1.5 -start-[1.62rem] size-3 rounded-full border-2 border-surface bg-brand" />
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="text-sm font-semibold text-muted">{fmt.day(r.performedOn)}</div>

@@ -189,7 +189,7 @@ export default function CheckInsPage() {
                     <div className="font-semibold">{p.displayName}</div>
                     <div className="text-sm text-muted">
                       {p.latest ? t('checkins.lastDue', { when: fmt.dateTime(p.latest.dueAt) }) : t('checkins.noneYet')}
-                      {p.receivesAlerts && <Badge className="ml-2" tone="accent">{t('checkins.youGetAlerts')}</Badge>}
+                      {p.receivesAlerts && <Badge className="ms-2" tone="accent">{t('checkins.youGetAlerts')}</Badge>}
                     </div>
                   </div>
                   {st && <StatusBadge group="checkInState" value={st} />}

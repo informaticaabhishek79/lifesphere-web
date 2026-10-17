@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
-import { HeartHandshake, Lock, ShieldCheck, Users } from 'lucide-react';
+import { Globe, HeartHandshake, Lock, ShieldCheck, Users } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import type { LoginResult, OtpChallenge } from '@/lib/types';
-import { useI18n, LOCALES } from '@/i18n';
+import { useI18n, LANGUAGE_OPTIONS, type Locale } from '@/i18n';
 import { Logo } from '@/components/brand';
 import { Button, ErrorNotice, Notice } from '@/components/ui';
 import { Checkbox, Input, Segmented } from '@/components/form';
+import { PhoneInput, useDetectedCountry } from '@/components/phone';
 
 const SIGNUP_CODES = new Set(['age_confirmation_required', 'policy_acceptance_required', 'display_name_required']);
 
@@ -31,6 +32,11 @@ function SignInInner() {
   const [step, setStep] = useState<'start' | 'code' | 'mfa'>('start');
   const [channel, setChannel] = useState<'sms' | 'email'>('sms');
   const [destination, setDestination] = useState('');
+  const [country, setCountryState] = useDetectedCountry();
+  const setCountry = (c: string) => {
+    setCountryState(c);
+    document.cookie = `ls_region=${c}; path=/; max-age=31536000; samesite=lax`;
+  };
   const [isNew, setIsNew] = useState(false);
   const [displayName, setDisplayName] = useState('');
   const [ageConfirmed, setAgeConfirmed] = useState(false);
@@ -63,7 +69,7 @@ function SignInInner() {
     setBusy(true);
     setError(null);
     try {
-      const ch = await api.post<OtpChallenge>('/v1/auth/otp/request', { channel, destination: destination.trim() });
+      const ch = await api.post<OtpChallenge>('/v1/auth/otp/request', { channel, destination: destination.trim(), ...(channel === 'sms' ? { country } : {}) });
       setChallenge(ch);
       setCode('');
       setStep('code');
@@ -87,8 +93,9 @@ function SignInInner() {
         code: code.trim(),
         deviceName: deviceName(),
         platform: 'web',
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Kolkata',
-        locale: locale === 'hi' ? 'hi-IN' : 'en-IN',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || undefined,
+        locale,
+        country,
         ...(isNew ? { displayName: displayName.trim(), ageConfirmed: true, acceptedPolicyVersion: '2026-10' } : {}),
       });
       if (res.status === 'mfa_required') {
@@ -129,9 +136,9 @@ function SignInInner() {
     <div className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
       {/* Brand panel */}
       <aside className="relative hidden overflow-hidden bg-brand text-brand-ink lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 size-[28rem] rounded-full bg-white/8" />
-        <div aria-hidden className="pointer-events-none absolute bottom-[-10rem] left-[-6rem] size-[30rem] rounded-full border-[3rem] border-white/6" />
-        <div aria-hidden className="pointer-events-none absolute top-[18%] right-20 size-20 rounded-full bg-accent/80" />
+        <div aria-hidden className="pointer-events-none absolute -top-24 -end-24 size-[28rem] rounded-full bg-white/8" />
+        <div aria-hidden className="pointer-events-none absolute bottom-[-10rem] start-[-6rem] size-[30rem] rounded-full border-[3rem] border-white/6" />
+        <div aria-hidden className="pointer-events-none absolute top-[18%] end-20 size-20 rounded-full bg-accent/80" />
         <div className="relative">
           <span className="inline-flex items-center gap-2.5">
             <svg viewBox="0 0 40 40" className="size-10" aria-hidden>
@@ -166,19 +173,17 @@ function SignInInner() {
       <main className="flex flex-col px-5 py-6 sm:px-10">
         <div className="flex items-center justify-between">
           <Logo className="lg:invisible" />
-          <div className="flex gap-1">
-            {LOCALES.map((l) => (
-              <button
-                key={l.code}
-                type="button"
-                onClick={() => setLocale(l.code)}
-                aria-pressed={locale === l.code}
-                className={`rounded-lg px-3 py-1.5 text-sm font-semibold ${locale === l.code ? 'bg-brand-soft text-brand' : 'text-muted hover:text-ink'}`}
-              >
-                {l.label}
-              </button>
-            ))}
-          </div>
+          <label className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold text-muted focus-within:text-ink hover:text-ink">
+            <Globe className="size-4" aria-hidden />
+            <span className="sr-only">{t('common.language')}</span>
+            <select value={locale} onChange={(e) => void setLocale(e.target.value as Locale)} className="cursor-pointer bg-transparent font-semibold text-ink focus:outline-none">
+              {LANGUAGE_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
@@ -201,18 +206,7 @@ function SignInInner() {
                 ]}
               />
               {channel === 'sms' ? (
-                <Input
-                  label={t('auth.phoneLabel')}
-                  hint={t('auth.phoneHint')}
-                  type="tel"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  placeholder="98765 43210"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  required
-                  className="h-13 text-lg tracking-wide"
-                />
+                <PhoneInput label={t('auth.phoneLabel')} hint={t('auth.phoneHint')} value={destination} onChange={setDestination} country={country} onCountryChange={setCountry} required />
               ) : (
                 <Input
                   label={t('auth.emailLabel')}

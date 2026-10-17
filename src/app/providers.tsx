@@ -4,10 +4,11 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from '@ta
 import { useState } from 'react';
 import { ApiError } from '@/lib/api';
 import { I18nProvider, type Locale } from '@/i18n';
+import type { Dict } from '@/i18n/load';
 import { ConfirmProvider, ToastProvider } from '@/components/dialog';
 import { ReauthProvider } from '@/components/reauth';
 
-export function Providers({ locale, children }: { locale: Locale; children: React.ReactNode }) {
+export function Providers({ locale, dict, region, children }: { locale: Locale; dict: Dict | null; region: string | null; children: React.ReactNode }) {
   const [client] = useState(
     () =>
       new QueryClient({
@@ -24,7 +25,7 @@ export function Providers({ locale, children }: { locale: Locale; children: Reac
   );
   return (
     <QueryClientProvider client={client}>
-      <I18nProvider initial={locale}>
+      <I18nProvider initial={locale} initialDict={dict} initialRegion={region}>
         <ToastProvider>
           <ConfirmProvider>
             <ReauthProvider>{children}</ReauthProvider>

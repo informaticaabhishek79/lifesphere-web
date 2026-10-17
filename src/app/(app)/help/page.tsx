@@ -109,10 +109,10 @@ export default function HelpPage() {
           </Button>
         }
       />
-      <Notice tone="danger" className="mb-5" title={t('help.emergencyTitle', { number: prefs.data?.emergencyNumber ?? '112' })}>
+      <Notice tone="danger" className="mb-5" title={t('help.emergencyTitle', { number: prefs.data?.emergencyNumber ?? me.profile.countryDefaults?.emergency ?? '112' })}>
         <span>{locale === 'en' && prefs.data?.disclaimer ? prefs.data.disclaimer : t('help.disclaimer')}</span>{' '}
-        <a href={`tel:${prefs.data?.emergencyNumber ?? '112'}`} className="font-bold underline">
-          {t('help.callNow', { number: prefs.data?.emergencyNumber ?? '112' })}
+        <a href={`tel:${prefs.data?.emergencyNumber ?? me.profile.countryDefaults?.emergency ?? '112'}`} className="font-bold underline">
+          {t('help.callNow', { number: prefs.data?.emergencyNumber ?? me.profile.countryDefaults?.emergency ?? '112' })}
         </a>
       </Notice>
 
@@ -233,7 +233,7 @@ export default function HelpPage() {
                     <span className="flex items-center gap-2">
                       <Phone className="size-5" /> {c.label}
                     </span>
-                    <span className="tabular-nums">{c.number}</span>
+                    <span className="tabular-nums" dir="ltr">{c.number}</span>
                   </a>
                 ))}
               </div>

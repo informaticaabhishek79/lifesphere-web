@@ -523,12 +523,37 @@
             "name": "pincodePrefix",
             "required": false,
             "in": "query",
+            "description": "Start of a postal code",
             "schema": {
               "example": "110",
               "type": "string"
             }
+          },
+          {
+            "name": "country",
+            "required": false,
+            "in": "query",
+            "description": "Country (default: your own; \"all\" for every country)",
+            "schema": {
+              "example": "IN",
+              "type": "string"
+            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "directory"
+        ]
+      }
+    },
+    "/v1/countries": {
+      "get": {
+        "operationId": "DirectoryController_countries_v1",
+        "parameters": [],
         "responses": {
           "200": {
             "description": ""
@@ -8377,8 +8402,13 @@
           },
           "destination": {
             "type": "string",
-            "example": "+919876543210",
-            "description": "Phone number (E.164 or 10-digit Indian) or email address"
+            "example": "+447700900123",
+            "description": "Phone number (E.164, or national format with `country`) or email address"
+          },
+          "country": {
+            "type": "string",
+            "example": "GB",
+            "description": "ISO 3166 country used to read a phone number given without +country code. Default IN."
           }
         },
         "required": [
@@ -8422,11 +8452,18 @@
           },
           "timezone": {
             "type": "string",
-            "example": "Asia/Kolkata"
+            "example": "Europe/London",
+            "description": "New accounts: the device time zone"
           },
           "locale": {
             "type": "string",
-            "example": "en-IN"
+            "example": "en-GB",
+            "description": "New accounts: preferred language"
+          },
+          "country": {
+            "type": "string",
+            "example": "GB",
+            "description": "New accounts: country of residence (else taken from the phone number or time zone)"
           }
         },
         "required": [
@@ -8507,6 +8544,10 @@
           },
           "destination": {
             "type": "string"
+          },
+          "country": {
+            "type": "string",
+            "example": "GB"
           }
         },
         "required": [
@@ -8560,11 +8601,16 @@
           },
           "locale": {
             "type": "string",
-            "example": "en-IN"
+            "example": "en-GB"
           },
           "timezone": {
             "type": "string",
-            "example": "Asia/Kolkata"
+            "example": "Europe/London"
+          },
+          "country": {
+            "type": "string",
+            "example": "GB",
+            "description": "Country of residence (ISO 3166 alpha-2)"
           },
           "seniorMode": {
             "type": "boolean"
@@ -9587,7 +9633,8 @@
           },
           "currency": {
             "type": "string",
-            "example": "INR"
+            "example": "INR",
+            "description": "ISO 4217; defaults to your country’s currency"
           },
           "note": {
             "type": "string"
@@ -9736,7 +9783,7 @@
           },
           "timezone": {
             "type": "string",
-            "example": "Asia/Kolkata"
+            "example": "Europe/London"
           },
           "reminderAfterMinutes": {
             "type": "number",
@@ -9808,7 +9855,7 @@
           },
           "timezone": {
             "type": "string",
-            "example": "Asia/Kolkata"
+            "example": "Europe/London"
           },
           "reminderAfterMinutes": {
             "type": "number",
@@ -11094,7 +11141,8 @@
           },
           "pincodePrefix": {
             "type": "string",
-            "example": "110"
+            "example": "110",
+            "description": "Start of the postal code (e.g. 3 PIN digits, UK outward code)"
           },
           "lat": {
             "type": "string",
@@ -11131,7 +11179,8 @@
           },
           "pincodePrefix": {
             "type": "string",
-            "example": "110"
+            "example": "110",
+            "description": "Start of the postal code (e.g. 3 PIN digits, UK outward code)"
           },
           "lat": {
             "type": "string",
@@ -11162,6 +11211,12 @@
           },
           "jurisdiction": {
             "type": "string"
+          },
+          "country": {
+            "type": "object",
+            "example": "IN",
+            "description": "Country served; leave empty for every country",
+            "nullable": true
           },
           "topics": {
             "type": "array",
@@ -11207,6 +11262,12 @@
           },
           "jurisdiction": {
             "type": "string"
+          },
+          "country": {
+            "type": "object",
+            "example": "IN",
+            "description": "Country served; leave empty for every country",
+            "nullable": true
           },
           "topics": {
             "type": "array",
@@ -11336,6 +11397,11 @@
           "language": {
             "type": "string"
           },
+          "country": {
+            "type": "string",
+            "example": "IN",
+            "description": "Country the guide applies to; leave empty for general guidance"
+          },
           "publishedOn": {
             "type": "string"
           },
@@ -11372,6 +11438,10 @@
           },
           "topic": {
             "type": "string"
+          },
+          "country": {
+            "type": "object",
+            "nullable": true
           },
           "lastReviewedOn": {
             "type": "string"

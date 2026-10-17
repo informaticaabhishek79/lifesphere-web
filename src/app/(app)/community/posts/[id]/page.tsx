@@ -165,7 +165,7 @@ export default function PostPage() {
         </Card>
         <p className="text-center text-sm">
           <Link href={`/community/groups/${post.groupId}`} className="font-semibold text-brand">
-            ← {group.data?.name}
+            <span aria-hidden className="flip-rtl inline-block">←</span> {group.data?.name}
           </Link>
         </p>
       </div>

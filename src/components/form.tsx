@@ -30,7 +30,7 @@ export function Field({
       {label && (
         <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-ink">
           {label}
-          {optional && <span className="ml-1.5 font-normal text-muted">({t('common.optional')})</span>}
+          {optional && <span className="ms-1.5 font-normal text-muted">({t('common.optional')})</span>}
         </label>
       )}
       {children}
@@ -106,7 +106,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
         ref={ref}
         id={fid}
         aria-invalid={error ? true : undefined}
-        className={cx(control, 'h-11 appearance-none bg-[length:1.1em] bg-[right_0.8rem_center] bg-no-repeat pr-9', className)}
+        className={cx(control, 'h-11 appearance-none bg-[length:1.1em] bg-[right_0.8rem_center] rtl:bg-[left_0.8rem_center] bg-no-repeat pe-9', className)}
         style={{
           backgroundImage:
             "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366716f' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
@@ -193,7 +193,7 @@ export function Switch({
           checked ? 'border-brand bg-brand' : 'border-line-strong bg-bg-2',
         )}
       >
-        <span className={cx('inline-block size-5 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-5' : 'translate-x-0.5')} />
+        <span className={cx('inline-block size-5 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-5 rtl:-translate-x-5' : 'translate-x-0.5 rtl:-translate-x-0.5')} />
       </button>
     </div>
   );

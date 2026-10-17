@@ -57,7 +57,7 @@ export default function AdminUsers() {
         }}
       >
         <Segmented value={by} onChange={setBy} options={[{ value: 'phone', label: 'Phone' }, { value: 'email', label: 'Email' }, { value: 'userId', label: 'User ID' }]} />
-        <Input aria-label="Search value" value={value} onChange={(ev) => setValue(ev.target.value)} placeholder={by === 'phone' ? '+919876543210' : by === 'email' ? 'name@example.com' : 'uuid'} fieldClassName="min-w-[16rem] flex-1" />
+        <Input aria-label="Search value" value={value} onChange={(ev) => setValue(ev.target.value)} placeholder={by === 'phone' ? '+447400123456 or +919876543210' : by === 'email' ? 'name@example.com' : 'uuid'} fieldClassName="min-w-[16rem] flex-1" />
         <Button type="submit" loading={busy}>
           Find
         </Button>

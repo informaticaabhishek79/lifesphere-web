@@ -87,7 +87,7 @@ export default function DashboardPage() {
                         type="button"
                         onClick={() => checkIn.mutate()}
                         disabled={checkIn.isPending}
-                        className="card flex items-center gap-3 px-4 py-3.5 text-left font-semibold text-ok hover:border-ok/40 disabled:opacity-60"
+                        className="card flex items-center gap-3 px-4 py-3.5 text-start font-semibold text-ok hover:border-ok/40 disabled:opacity-60"
                       >
                         <span className="flex size-9 items-center justify-center rounded-xl bg-ok-soft">
                           <Check className="size-5" />
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                   ) : (
                     (d.peopleICheckOn?.length ?? 0) === 0 && (
                       <Link href="/check-ins" className="block rounded-xl bg-surface-2 px-4 py-3 text-sm text-ink-2 hover:text-brand">
-                        {t('dashboard.setUpCheckIns')} →
+                        {t('dashboard.setUpCheckIns')} <span aria-hidden className="flip-rtl inline-block">→</span>
                       </Link>
                     )
                   )}
@@ -318,7 +318,7 @@ export default function DashboardPage() {
 
           <div className="flex justify-end">
             <Link href="/settings#widgets" className="text-sm font-semibold text-muted hover:text-ink">
-              {t('dashboard.customise')} →
+              {t('dashboard.customise')} <span aria-hidden className="flip-rtl inline-block">→</span>
             </Link>
           </div>
         </div>

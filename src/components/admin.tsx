@@ -18,7 +18,7 @@ export function DataTable<T>({ rows, columns, rowKey, onRowClick, empty = 'Nothi
     <div className="card overflow-x-auto">
       <table className="w-full min-w-[40rem] text-sm">
         <thead>
-          <tr className="border-b border-line bg-surface-2 text-left text-xs uppercase tracking-wide text-muted">
+          <tr className="border-b border-line bg-surface-2 text-start text-xs uppercase tracking-wide text-muted">
             {columns.map((c) => (
               <th key={c.key} className={cx('px-3 py-2 font-semibold', c.className)}>
                 {c.label}

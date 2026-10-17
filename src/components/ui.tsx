@@ -115,7 +115,7 @@ export function PageHeader({
     <header className="mb-6 rise">
       {back && (
         <Link href={back.href} className="mb-3 inline-flex items-center gap-1 text-sm font-medium text-muted hover:text-ink">
-          <span aria-hidden>←</span> {back.label}
+          <span aria-hidden className="flip-rtl inline-block">←</span> {back.label}
         </Link>
       )}
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -337,7 +337,7 @@ export function ListItem({
           {inner}
         </Link>
       ) : onClick ? (
-        <button type="button" onClick={onClick} className={cx(cls, 'w-full text-left')}>
+        <button type="button" onClick={onClick} className={cx(cls, 'w-full text-start')}>
           {inner}
         </button>
       ) : (

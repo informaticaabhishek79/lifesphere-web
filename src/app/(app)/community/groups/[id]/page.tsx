@@ -116,7 +116,7 @@ export default function GroupPage() {
             <div className="space-y-3">
               {heldNotice && <Notice tone="warn">{heldNotice}</Notice>}
               {canPost && (
-                <button type="button" onClick={() => { setPost(emptyPost()); setComposer(true); }} className="card flex w-full items-center gap-3 px-4 py-3 text-left text-muted hover:border-line-strong">
+                <button type="button" onClick={() => { setPost(emptyPost()); setComposer(true); }} className="card flex w-full items-center gap-3 px-4 py-3 text-start text-muted hover:border-line-strong">
                   <Avatar name={me.profile.displayName} size="sm" />
                   <span className="flex-1">{t('community.writePost')}</span>
                   <PenSquare className="size-5" />
@@ -270,7 +270,7 @@ export default function GroupPage() {
       >
         {others.length === 0 ? (
           <p className="text-sm text-muted">
-            <Users className="mr-1 inline size-4" />
+            <Users className="me-1 inline size-4" />
             {t('contacts.empty')}
           </p>
         ) : (

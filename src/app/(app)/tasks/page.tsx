@@ -104,8 +104,8 @@ function Inner() {
       {tab !== 'offered' && (
         <div className="mb-4 flex flex-wrap gap-3">
           <div className="relative min-w-[14rem] flex-1">
-            <Search className="pointer-events-none absolute top-3.5 left-3 size-4 text-muted" />
-            <Input aria-label={t('common.search')} placeholder={t('common.search')} value={q} onChange={(e) => setQ(e.target.value)} className="pl-9" />
+            <Search className="pointer-events-none absolute top-3.5 start-3 size-4 text-muted" />
+            <Input aria-label={t('common.search')} placeholder={t('common.search')} value={q} onChange={(e) => setQ(e.target.value)} className="ps-9" />
           </div>
           {tab === 'household' && (households.data?.length ?? 0) > 1 && (
             <Select aria-label={t('nav.households')} value={householdId} onChange={(e) => setHouseholdId(e.target.value)} placeholder={t('common.all')} options={(households.data ?? []).map((h) => ({ value: h.id, label: h.name }))} fieldClassName="w-48" />

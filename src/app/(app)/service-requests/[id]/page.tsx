@@ -85,7 +85,7 @@ export default function ServiceRequestPage() {
               </div>
               {r.provider.phonePublic && r.myRole !== 'provider' && (
                 <a href={`tel:${r.provider.phonePublic}`} className="inline-flex items-center gap-1 text-sm font-semibold text-brand">
-                  <Phone className="size-4" /> {r.provider.phonePublic}
+                  <Phone className="size-4" /> <bdi dir="ltr">{r.provider.phonePublic}</bdi>
                 </a>
               )}
             </CardBody>
@@ -95,10 +95,10 @@ export default function ServiceRequestPage() {
           <Card>
             <CardHeader title={t('services.history')} />
             <CardBody>
-              <ol className="relative space-y-3 border-l-2 border-line pl-5">
+              <ol className="relative space-y-3 border-s-2 border-line ps-5">
                 {r.history!.map((h) => (
                   <li key={h.id} className="relative">
-                    <span className="absolute top-1.5 -left-[1.62rem] size-3 rounded-full border-2 border-surface bg-brand" />
+                    <span className="absolute top-1.5 -start-[1.62rem] size-3 rounded-full border-2 border-surface bg-brand" />
                     <div className="font-medium">{e('serviceRequestStatus', h.toStatus)}</div>
                     <div className="text-sm text-muted">{fmt.dateTime(h.createdAt)}</div>
                     {h.note && <div className="text-sm">{h.note}</div>}

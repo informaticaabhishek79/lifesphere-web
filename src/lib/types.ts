@@ -42,7 +42,18 @@ export interface Locality {
   name: string;
   city: string;
   state: string;
+  country?: string;
   pincodePrefix?: string | null;
+}
+
+/** GET /v1/countries */
+export interface CountryInfo {
+  code: string;
+  dialCode: string | null;
+  currency: string;
+  emergency: string;
+  timezone: string;
+  language: string;
 }
 
 export interface Me {
@@ -61,6 +72,9 @@ export interface Me {
     avatarAttachmentId: ID | null;
     locale: string;
     timezone: string;
+    /** ISO 3166-1 alpha-2, e.g. "IN", "GB". */
+    country: string | null;
+    countryDefaults: { code: string; currency: string; emergency: string; timezone: string; language: string };
     seniorMode: boolean;
     discoverable: boolean;
     bio: string | null;
@@ -649,6 +663,7 @@ export interface OfficialChannel {
   kind: 'consumer' | 'civic' | 'government' | 'helpline';
   name: string;
   jurisdiction: string | null;
+  country: string | null;
   topics: string[];
   url: string | null;
   phone: string | null;
@@ -879,6 +894,8 @@ export interface ArticleSummary {
   title: string;
   summary: string | null;
   topic: string | null;
+  /** Country the guide applies to; null = general. */
+  country?: string | null;
   lastReviewedOn: Day | null;
   canonicalUrl: string | null;
 }
