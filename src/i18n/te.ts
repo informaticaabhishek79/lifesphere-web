@@ -147,7 +147,8 @@ export const te: DeepPartial<Messages> = {
     unread: '{count} చదవనివి',
     seniorModeOn: 'వృద్ధుల మోడ్ ఆన్‌లో ఉంది',
     signedInAs: '{name}గా సైన్ ఇన్ అయ్యారు',
-    simulatedBanner: 'పరీక్ష మోడ్: సందేశాలు, నోటిఫికేషన్లు, AI సమాధానాలు నమూనాలు మాత్రమే, నిజంగా పంపబడవు.',
+    simulatedBanner: 'టెస్ట్ మోడ్: {list} — ఇంకా నిజంగా పంపబడవు.',
+    channel: { sms: 'SMS సందేశాలు', email: 'ఈమెయిల్స్', webPush: 'బ్రౌజర్ నోటిఫికేషన్లు', ai: 'AI జవాబులు' },
     pendingDeletion: 'మీ ఖాతా {date}న తొలగించబడుతుంది. సైన్ ఇన్ చేస్తే అది రద్దవుతుంది — లేదా గోప్యత & డేటాలో రద్దు చేయండి.',
   },
   auth: {

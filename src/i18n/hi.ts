@@ -147,7 +147,8 @@ export const hi: DeepPartial<Messages> = {
     unread: '{count} अपठित',
     seniorModeOn: 'वरिष्ठ मोड चालू है',
     signedInAs: '{name} के रूप में साइन इन',
-    simulatedBanner: 'टेस्ट मोड: संदेश, अलर्ट और AI जवाब नकली हैं, असल में नहीं भेजे जाते।',
+    simulatedBanner: 'टेस्ट मोड: {list} — अभी असल में नहीं भेजे जाते।',
+    channel: { sms: 'SMS संदेश', email: 'ईमेल', webPush: 'ब्राउज़र सूचनाएँ', ai: 'AI जवाब' },
     pendingDeletion: 'आपका खाता {date} को हटाया जाएगा। साइन इन करने से यह रद्द हो जाता है — या निजता और डेटा में जाकर रद्द करें।',
   },
   auth: {

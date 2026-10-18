@@ -147,7 +147,8 @@ export const bn: DeepPartial<Messages> = {
     unread: '{count}টি অপঠিত',
     seniorModeOn: 'প্রবীণ মোড চালু আছে',
     signedInAs: '{name} হিসেবে সাইন ইন করা',
-    simulatedBanner: 'পরীক্ষামূলক মোড: বার্তা, সতর্কবার্তা ও AI-এর উত্তর অনুকরণ মাত্র, সত্যিই পাঠানো হয় না।',
+    simulatedBanner: 'টেস্ট মোড: {list} — এখনও আসলে পাঠানো হয় না।',
+    channel: { sms: 'SMS বার্তা', email: 'ইমেল', webPush: 'ব্রাউজার নোটিফিকেশন', ai: 'AI উত্তর' },
     pendingDeletion: 'আপনার অ্যাকাউন্ট {date} তারিখে মুছে ফেলা হবে। সাইন ইন করলে তা বাতিল হবে — অথবা গোপনীয়তা ও ডেটা থেকে বাতিল করুন।',
   },
   auth: {

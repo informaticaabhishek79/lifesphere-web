@@ -254,7 +254,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const [drawer, setDrawer] = useState(false);
   const { data: unread = 0 } = useUnread();
   const { data: health } = useIntegrations();
-  const simulated = health && Object.values(health.integrations).some((v) => v === 'simulated');
+  // Channels people would notice. Phone-app push is left out until there is a phone app to receive it.
+  const simulatedList = health ? (['sms', 'email', 'webPush', 'ai'] as const).filter((k) => health.integrations[k] === 'simulated' || (k === 'ai' && health.integrations.ai === 'mock')) : [];
+  const simulated = simulatedList.length > 0;
 
   useEffect(() => {
     setDrawer(false);
@@ -336,7 +338,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             )}
           </div>
           {simulated && (
-            <div className="border-t border-warn/20 bg-warn-soft px-4 py-1.5 text-center text-xs font-medium text-warn sm:px-6">{t('shell.simulatedBanner')}</div>
+            <div className="border-t border-warn/20 bg-warn-soft px-4 py-1.5 text-center text-xs font-medium text-warn sm:px-6">{t('shell.simulatedBanner', { list: simulatedList.map((k) => t(`shell.channel.${k}`)).join(', ') })}</div>
           )}
           {me.status === 'pending_deletion' && me.deletionRequestedAt && (
             <div className="border-t border-danger/20 bg-danger-soft px-4 py-2 text-center text-sm font-medium text-danger">

@@ -142,7 +142,8 @@ export const en = {
     unread: '{count} unread',
     seniorModeOn: 'Senior mode is on',
     signedInAs: 'Signed in as {name}',
-    simulatedBanner: 'Test mode: messages, alerts and AI answers are simulated, not really sent.',
+    simulatedBanner: 'Test mode: {list} — not really sent yet.',
+    channel: { sms: 'text messages (SMS)', email: 'emails', webPush: 'browser notifications', ai: 'AI answers' },
     pendingDeletion: 'Your account is scheduled for deletion on {date}. Sign-in cancels it — or cancel from Privacy & data.',
   },
   auth: {

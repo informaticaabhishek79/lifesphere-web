@@ -147,7 +147,8 @@ export const ar: DeepPartial<Messages> = {
     unread: '{count} غير مقروءة',
     seniorModeOn: 'وضع كبار السن مفعّل',
     signedInAs: 'مسجّل الدخول باسم {name}',
-    simulatedBanner: 'وضع الاختبار: الرسائل والتنبيهات وإجابات الذكاء الاصطناعي محاكاة ولا تُرسل فعليًا.',
+    simulatedBanner: 'وضع الاختبار: {list} — لا تُرسل فعليًا بعد.',
+    channel: { sms: 'الرسائل النصية', email: 'البريد الإلكتروني', webPush: 'إشعارات المتصفح', ai: 'إجابات الذكاء الاصطناعي' },
     pendingDeletion: 'سيُحذف حسابك في {date}. تسجيل الدخول يلغي الحذف — أو ألغِه من الخصوصية والبيانات.',
   },
   auth: {

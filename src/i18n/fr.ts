@@ -147,7 +147,8 @@ export const fr: DeepPartial<Messages> = {
     unread: '{count} non lu(s)',
     seniorModeOn: 'Le mode senior est activé',
     signedInAs: 'Connecté en tant que {name}',
-    simulatedBanner: 'Mode test : les messages, alertes et réponses de l’IA sont simulés et ne sont pas réellement envoyés.',
+    simulatedBanner: 'Mode test : {list} — pas encore réellement envoyés.',
+    channel: { sms: 'SMS', email: 'e-mails', webPush: 'notifications du navigateur', ai: 'réponses de l’IA' },
     pendingDeletion: 'Votre compte sera supprimé le {date}. Vous connecter l’annule — ou annulez depuis Confidentialité et données.',
   },
   auth: {
