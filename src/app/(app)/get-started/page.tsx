@@ -271,7 +271,7 @@ function GetStarted() {
           onClick={() =>
             run(async () => {
               await api.put('/v1/notifications/preferences', {
-                items: ['checkins', 'help'].map((category) => ({ category, inApp: true, push: true, sms, bypassQuietHours: bypass })),
+                items: ['checkins', 'help'].map((category) => ({ category, inApp: true, push: true, email: true, sms, bypassQuietHours: bypass })),
               });
               go('invited');
             })
