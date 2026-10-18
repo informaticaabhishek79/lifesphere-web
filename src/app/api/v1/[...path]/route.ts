@@ -23,7 +23,8 @@ const FORWARD_RESPONSE_HEADERS = [
   'content-disposition',
   // Downloads from cloud storage redirect to a short-lived signed URL.
   'location',
-  'content-length',
+  // No content-length: fetch() hands us the body already decompressed, so the upstream length (of the compressed
+  // body, when a proxy such as Render's gzips it) would be wrong and the browser would cut the response short.
   'cache-control',
   'idempotent-replay',
   'retry-after',
@@ -96,7 +97,6 @@ async function handle(req: NextRequest, ctx: { params: Promise<{ path: string[] 
     const json = (await upstream.json()) as Record<string, unknown>;
     const pair = json.accessToken ? (json as unknown as TokenPair) : null;
     const { accessToken: _a, refreshToken: _r, accessTokenExpiresAt: _ae, refreshTokenExpiresAt: _re, ...rest } = json;
-    outHeaders.delete('content-length');
     res = NextResponse.json(rest, { status: upstream.status, headers: outHeaders });
     if (pair) setSessionCookies(req, res, pair);
     return res;

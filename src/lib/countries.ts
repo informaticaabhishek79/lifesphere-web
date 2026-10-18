@@ -7,7 +7,17 @@ import type { CountryInfo } from './types';
 
 /** Every country with calling code and local defaults (public endpoint; cached for the session). */
 export function useCountries() {
-  return useQuery({ queryKey: ['countries'], queryFn: () => api.get<CountryInfo[]>('/v1/countries'), staleTime: Infinity, gcTime: Infinity });
+  return useQuery({
+    queryKey: ['countries'],
+    // A broken reply must not take the sign-in page down: treat anything but a list as an error (retried).
+    queryFn: async () => {
+      const list = await api.get<CountryInfo[]>('/v1/countries');
+      if (!Array.isArray(list)) throw new Error('Unexpected reply for /v1/countries');
+      return list;
+    },
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
 }
 
 export function flagOf(code: string) {
