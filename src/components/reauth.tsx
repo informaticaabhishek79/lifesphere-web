@@ -1,13 +1,15 @@
 'use client';
 
 import { createContext, useCallback, useContext, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { api, ApiError } from '@/lib/api';
-import type { OtpChallenge } from '@/lib/types';
+import type { Me, OtpChallenge } from '@/lib/types';
 import { useI18n } from '@/i18n';
 import { Dialog } from './dialog';
 import { Input, Segmented } from './form';
 import { Button, ErrorNotice, Notice } from './ui';
 
+type Method = 'sms' | 'email' | 'totp';
 type Runner = <T>(fn: () => Promise<T>) => Promise<T>;
 const ReauthContext = createContext<Runner>((fn) => fn());
 
@@ -18,8 +20,10 @@ const ReauthContext = createContext<Runner>((fn) => fn());
  */
 export function ReauthProvider({ children }: { children: React.ReactNode }) {
   const { t } = useI18n();
+  const qc = useQueryClient();
+  const [methods, setMethods] = useState<Method[]>(['sms', 'email', 'totp']);
   const [open, setOpen] = useState(false);
-  const [method, setMethod] = useState<'sms' | 'email' | 'totp'>('sms');
+  const [method, setMethod] = useState<Method>('sms');
   const [challenge, setChallenge] = useState<OtpChallenge | null>(null);
   const [code, setCode] = useState('');
   const [busy, setBusy] = useState(false);
@@ -36,6 +40,13 @@ export function ReauthProvider({ children }: { children: React.ReactNode }) {
   const ask = () =>
     new Promise<void>((resolve, reject) => {
       pending.current = { resolve, reject };
+      // Offer only what this account has: an account made with Google may have no phone, and the authenticator
+      // only counts once two-step verification is on.
+      const me = qc.getQueryData<Me>(['me']);
+      const has: Method[] = me ? [...(me.phone ? (['sms'] as const) : []), ...(me.email ? (['email'] as const) : []), ...(me.mfa?.totpEnabled ? (['totp'] as const) : [])] : ['sms', 'email', 'totp'];
+      const list = has.length ? has : (['sms', 'email'] as Method[]);
+      setMethods(list);
+      setMethod(list[0]);
       reset();
       setOpen(true);
     });
@@ -114,18 +125,16 @@ export function ReauthProvider({ children }: { children: React.ReactNode }) {
         }
       >
         <div className="space-y-4">
-          <Segmented
-            value={method}
-            onChange={(m) => {
-              setMethod(m);
-              reset();
-            }}
-            options={[
-              { value: 'sms', label: t('auth.phoneTab') },
-              { value: 'email', label: t('auth.emailTab') },
-              { value: 'totp', label: t('auth.mfaCode') },
-            ]}
-          />
+          {methods.length > 1 && (
+            <Segmented
+              value={method}
+              onChange={(m) => {
+                setMethod(m);
+                reset();
+              }}
+              options={methods.map((m) => ({ value: m, label: m === 'sms' ? t('auth.phoneTab') : m === 'email' ? t('auth.emailTab') : t('auth.mfaCode') }))}
+            />
+          )}
           {challenge && <p className="text-sm text-muted">{t('auth.codeSentTo', { to: challenge.sentTo })}</p>}
           {challenge?.devCode && <Notice tone="warn">{t('auth.devCode', { code: challenge.devCode })}</Notice>}
           {needsCode && (

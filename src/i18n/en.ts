@@ -200,7 +200,7 @@ export const en = {
   },
   reauth: {
     title: 'Confirm it’s you',
-    body: 'This is a sensitive action. We’ll send a code to your registered mobile number.',
+    body: 'This is a sensitive action. Confirm with a code sent to your phone or email, or from your authenticator app.',
     send: 'Send code',
     verify: 'Confirm',
   },

@@ -205,7 +205,7 @@ export const fr: DeepPartial<Messages> = {
   },
   reauth: {
     title: 'Confirmez que c’est bien vous',
-    body: 'Cette action est sensible. Nous allons envoyer un code à votre numéro de mobile enregistré.',
+    body: 'Cette action est sensible. Confirmez avec un code envoyé sur votre mobile ou par e-mail, ou depuis votre application d’authentification.',
     send: 'Envoyer le code',
     verify: 'Confirmer',
   },

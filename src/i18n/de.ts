@@ -205,7 +205,7 @@ export const de: DeepPartial<Messages> = {
   },
   reauth: {
     title: 'Bestätige, dass du es bist',
-    body: 'Das ist eine sensible Aktion. Wir schicken einen Code an deine hinterlegte Handynummer.',
+    body: 'Das ist eine sensible Aktion. Bestätige sie mit einem Code an dein Handy oder deine E-Mail oder aus deiner Authenticator-App.',
     send: 'Code senden',
     verify: 'Bestätigen',
   },
