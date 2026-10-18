@@ -5,7 +5,7 @@ let n = 0;
 export const uniquePhone = () => `9${String(Date.now() + n++ * 7919).slice(-6)}${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
 
 /** Signs up (or in) through the real OTP screen. Requires OTP_DEV_ECHO on the API. */
-export async function signIn(page: Page, phone: string, name?: string) {
+export async function signIn(page: Page, phone: string, name?: string, opts: { keepSetup?: boolean } = {}) {
   await page.goto('/sign-in');
   await page.getByLabel('Mobile number', { exact: true }).fill(phone);
   if (name) {
@@ -18,7 +18,12 @@ export async function signIn(page: Page, phone: string, name?: string) {
   const hint = await page.getByText(/Test mode code: \d{6}/).textContent();
   await page.getByLabel(/Enter the 6-digit code/).last().fill(hint!.match(/\d{6}/)![0]);
   await page.getByRole('button', { name: /Verify and continue/ }).click();
-  await expect(page).toHaveURL(/\/$/);
+  // New accounts start with "What will you use LifeSphere for?"; most tests want the full home.
+  await expect(page).toHaveURL(name ? /\/get-started$/ : /\/$/);
+  if (name && !opts.keepSetup) {
+    await page.getByTestId('mode-standard').click();
+    await expect(page).toHaveURL(/\/$/);
+  }
 }
 
 /** Collects uncaught page errors and failed API calls (except expected 4xx probes). */

@@ -9,13 +9,13 @@ import { applyAppearance, useSession } from '@/lib/session';
 import type { ActivityItem, Feature, Locality, Me, MfaStatus, OtpChallenge, Preferences, SessionInfo, Theme } from '@/lib/types';
 import { LANGUAGE_OPTIONS, useI18n, type Locale } from '@/i18n';
 import { useCountryOptions } from '@/lib/countries';
-import { Badge, Button, Card, CardBody, CardHeader, ErrorNotice, List, ListItem, LoadingBlock, LoadMore, Notice, PageHeader, Tabs } from '@/components/ui';
+import { Badge, Button, ButtonLink, Card, CardBody, CardHeader, ErrorNotice, List, ListItem, LoadingBlock, LoadMore, Notice, PageHeader, Tabs } from '@/components/ui';
 import { Input, Segmented, Select, Switch, Textarea } from '@/components/form';
 import { FormDialog, useConfirm, useToast } from '@/components/dialog';
 import { useReauth } from '@/components/reauth';
 
 type Tab = 'profile' | 'appearance' | 'notifications' | 'widgets' | 'features' | 'security' | 'activity';
-const FEATURES: Feature[] = ['lifeos', 'household', 'familycare', 'community', 'consumer', 'services', 'assistant'];
+const FEATURES: Feature[] = ['lifeos', 'household', 'familycare', 'community', 'consumer', 'services', 'assistant', 'documents', 'agents'];
 /** Every IANA time zone the browser knows (falls back to a short list on very old browsers). */
 const TIMEZONES: string[] = (() => {
   try {
@@ -329,8 +329,12 @@ function FeaturesTab() {
   const { me } = useSession();
   const save = usePrefsSaver();
   const off = me.preferences.disabledFeatures;
+  const mode = me.preferences.homeMode;
   return (
     <div className="space-y-5">
+      <Card>
+        <CardHeader title={t('care.settingsTitle')} description={mode ? t(`care.settingsMode.${mode}`) : t('care.settingsNotChosen')} action={<ButtonLink href="/get-started" size="sm" variant="secondary">{t('care.settingsChange')}</ButtonLink>} />
+      </Card>
       <Card>
         <CardHeader title={t('settings.features')} description={t('settings.featuresHint')} />
         <CardBody className="space-y-2">

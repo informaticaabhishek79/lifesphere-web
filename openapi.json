@@ -8371,6 +8371,937 @@
           "admin"
         ]
       }
+    },
+    "/v1/documents/folders": {
+      "get": {
+        "operationId": "DocumentsController_folders_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      },
+      "post": {
+        "operationId": "DocumentsController_createFolder_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FolderCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/folders/{id}": {
+      "patch": {
+        "operationId": "DocumentsController_updateFolder_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FolderUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      },
+      "delete": {
+        "operationId": "DocumentsController_binFolder_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/folders/{id}/restore": {
+      "post": {
+        "operationId": "DocumentsController_restoreFolder_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/folders/{id}/files": {
+      "get": {
+        "operationId": "DocumentsController_files_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      },
+      "post": {
+        "operationId": "DocumentsController_upload_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/files/text": {
+      "post": {
+        "operationId": "DocumentsController_createText_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextFileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/files/{id}": {
+      "get": {
+        "operationId": "DocumentsController_file_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      },
+      "patch": {
+        "operationId": "DocumentsController_updateFile_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      },
+      "delete": {
+        "operationId": "DocumentsController_binFile_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/files/{id}/text": {
+      "get": {
+        "operationId": "DocumentsController_text_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      },
+      "put": {
+        "operationId": "DocumentsController_writeText_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TextContentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/files/{id}/content": {
+      "get": {
+        "operationId": "DocumentsController_content_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "inline",
+            "required": false,
+            "in": "query",
+            "description": "true to view in the browser (images, PDF, text)",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/files/{id}/restore": {
+      "post": {
+        "operationId": "DocumentsController_restoreFile_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/documents/bin": {
+      "get": {
+        "operationId": "DocumentsController_bin_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "documents"
+        ]
+      }
+    },
+    "/v1/mail/providers": {
+      "get": {
+        "operationId": "MailController_providers_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/mail/accounts": {
+      "get": {
+        "operationId": "MailController_accounts_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/mail/accounts/demo": {
+      "post": {
+        "operationId": "MailController_demo_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/mail/accounts/{id}": {
+      "delete": {
+        "operationId": "MailController_disconnect_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/mail/accounts/{id}/messages": {
+      "get": {
+        "operationId": "MailController_messages_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageToken",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/mail/accounts/{id}/messages/{messageId}": {
+      "get": {
+        "operationId": "MailController_message_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "messageId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/mail/oauth/{provider}/start": {
+      "post": {
+        "operationId": "MailController_start_v1",
+        "parameters": [
+          {
+            "name": "provider",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/mail/oauth/{provider}/callback": {
+      "get": {
+        "operationId": "MailController_callback_v1",
+        "parameters": [
+          {
+            "name": "provider",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "error",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "state",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          },
+          {
+            "name": "code",
+            "required": false,
+            "in": "query",
+            "schema": {}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "mail"
+        ]
+      }
+    },
+    "/v1/agents": {
+      "get": {
+        "operationId": "AgentsController_list_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      },
+      "post": {
+        "operationId": "AgentsController_create_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/agents/activity": {
+      "get": {
+        "operationId": "AgentsController_activity_v1",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/agents/{id}": {
+      "get": {
+        "operationId": "AgentsController_get_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      },
+      "patch": {
+        "operationId": "AgentsController_update_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AgentUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      },
+      "delete": {
+        "operationId": "AgentsController_remove_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/agents/{id}/activity": {
+      "get": {
+        "operationId": "AgentsController_runs_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/agents/{id}/email/reply": {
+      "post": {
+        "operationId": "AgentsController_reply_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailReplyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/agents/{id}/documents/run": {
+      "post": {
+        "operationId": "AgentsController_runDocuments_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentsRunDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/agents/activity/{runId}/approve": {
+      "post": {
+        "operationId": "AgentsController_approve_v1",
+        "parameters": [
+          {
+            "name": "runId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/agents/activity/{runId}/discard": {
+      "post": {
+        "operationId": "AgentsController_discard_v1",
+        "parameters": [
+          {
+            "name": "runId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "agents"
+        ]
+      }
+    },
+    "/v1/voice/ask": {
+      "post": {
+        "operationId": "VoiceController_ask_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "voice-assistant"
+        ]
+      }
+    },
+    "/v1/voice/settings": {
+      "get": {
+        "operationId": "VoiceController_settings_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "voice-assistant"
+        ]
+      },
+      "put": {
+        "operationId": "VoiceController_update_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "voice-assistant"
+        ]
+      }
     }
   },
   "info": {
@@ -8715,7 +9646,9 @@
                 "community",
                 "consumer",
                 "services",
-                "assistant"
+                "assistant",
+                "documents",
+                "agents"
               ]
             }
           },
@@ -11556,6 +12489,263 @@
           "subjectId",
           "planCode"
         ]
+      },
+      "FolderCreateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "FolderUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "object",
+            "nullable": true,
+            "description": "Move into this folder; null = top level"
+          }
+        }
+      },
+      "TextFileDto": {
+        "type": "object",
+        "properties": {
+          "folderId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "Notes.md"
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "folderId",
+          "name",
+          "content"
+        ]
+      },
+      "TextContentDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "content"
+        ]
+      },
+      "FileUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "folderId": {
+            "type": "string"
+          }
+        }
+      },
+      "FolderGrantDto": {
+        "type": "object",
+        "properties": {
+          "folderId": {
+            "type": "string"
+          },
+          "access": {
+            "type": "string",
+            "enum": [
+              "read",
+              "edit"
+            ],
+            "description": "read = look only; edit = also create, rename, move and bin files"
+          }
+        },
+        "required": [
+          "folderId",
+          "access"
+        ]
+      },
+      "AgentCreateDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "email",
+              "documents"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Mail helper"
+          },
+          "instructions": {
+            "type": "string",
+            "description": "Standing instructions, e.g. tone or signature"
+          },
+          "mailAccountId": {
+            "type": "object",
+            "nullable": true,
+            "description": "Email agents: the mailbox it may use"
+          },
+          "reviewBeforeSending": {
+            "type": "boolean",
+            "description": "Email agents: hold every reply for your approval"
+          },
+          "folders": {
+            "description": "Documents agents: the only folders it may use (subfolders included)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FolderGrantDto"
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "name"
+        ]
+      },
+      "AgentUpdateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "paused"
+            ]
+          },
+          "mailAccountId": {
+            "type": "object",
+            "nullable": true
+          },
+          "reviewBeforeSending": {
+            "type": "boolean"
+          },
+          "folders": {
+            "description": "Replaces the folder list",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FolderGrantDto"
+            }
+          }
+        }
+      },
+      "EmailReplyDto": {
+        "type": "object",
+        "properties": {
+          "messageId": {
+            "type": "string",
+            "description": "The one email to reply to (id from the inbox list)"
+          },
+          "instruction": {
+            "type": "string",
+            "example": "Say Saturday 10–12 works and ask them to bring the spare part"
+          },
+          "reviewFirst": {
+            "type": "boolean",
+            "description": "Show the reply before it is sent (overrides the agent setting for this request)"
+          }
+        },
+        "required": [
+          "messageId",
+          "instruction"
+        ]
+      },
+      "DocumentsRunDto": {
+        "type": "object",
+        "properties": {
+          "instruction": {
+            "type": "string",
+            "example": "Summarise the electricity bill and create a note with the due date"
+          }
+        },
+        "required": [
+          "instruction"
+        ]
+      },
+      "ApproveDto": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string",
+            "description": "Your edited version of the reply"
+          }
+        }
+      },
+      "TurnDto": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ]
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "role",
+          "text"
+        ]
+      },
+      "AskDto": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "example": "What do I have today?"
+          },
+          "history": {
+            "description": "The last few turns, kept by the app; nothing is stored on the server",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TurnDto"
+            }
+          }
+        },
+        "required": [
+          "question"
+        ]
+      },
+      "SettingsDto": {
+        "type": "object",
+        "properties": {
+          "speakAnswers": {
+            "type": "boolean"
+          },
+          "documentFolderIds": {
+            "description": "Document folders the assistant may read (folders inside included)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       }
     }
   }

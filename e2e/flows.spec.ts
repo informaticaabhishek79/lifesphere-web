@@ -158,7 +158,8 @@ test('community, consumer, civic, services and assistant', async ({ page }) => {
   await page.getByRole('button', { name: /Share something with the group/ }).click();
   await dialog(page).getByLabel('Message').fill('Water supply off tomorrow 10–2');
   await dialog(page).getByRole('button', { name: 'Post', exact: true }).click();
-  await page.getByText('Water supply off tomorrow 10–2').click();
+  await expect(dialog(page)).toHaveCount(0);
+  await page.getByRole('link').filter({ hasText: 'Water supply off tomorrow 10–2' }).click();
   await page.waitForURL(/\/community\/posts\//);
   await page.getByRole('button', { name: /Thanks/ }).first().click();
   await page.getByLabel('Write a comment…').fill('Thanks for sharing');

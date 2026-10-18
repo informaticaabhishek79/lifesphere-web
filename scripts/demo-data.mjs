@@ -145,6 +145,90 @@ async function step(label, fn) {
 }
 const section = (s) => console.log(`\n${s}`);
 
+/**
+ * Parent care: Kamla is "looked after" (simple home, medicines that alert Priya); Priya's home shows how Kamla is
+ * doing, with every other feature still on so the rest of the sample data stays visible. Safe to run again.
+ */
+async function parentCare() {
+  await step('Parent care: Kamla’s medicines and simple home; Priya’s family view', async () => {
+    const schedules = await kamla.get('/check-ins/schedules');
+    if (!schedules.some((s) => s.purpose === 'medicine')) {
+      await kamla.post('/care/setup', {
+        medicines: [
+          { name: 'BP tablet', times: ['08:00', '20:00'] },
+          { name: 'Thyroid tablet', times: ['07:00'] },
+        ],
+        medicineAlerts: true,
+        alertContactIds: [priya.id],
+        consentToAlertContacts: true,
+        largerText: true,
+      });
+    }
+    await kamla.post('/care/mode', { mode: 'cared_for' });
+    await priya.post('/care/mode', { mode: 'caregiver', focus: false });
+  });
+}
+
+/** Documents and agents for the main person. Safe to run again: it only adds what is missing. */
+async function documentsAndAgents() {
+  section('Documents and agents');
+  const docs = await step('Priya: folders and files (Bills with a subfolder, Manuals, Recipes, Private)', async () => {
+    const existing = await priya.get('/documents/folders');
+    const folder = async (name, parentId) =>
+      existing.find((f) => f.name === name && (f.parentId ?? null) === (parentId ?? null)) ?? (await priya.post('/documents/folders', { name, parentId }));
+    const bills = await folder('Bills');
+    const bills2026 = await folder('2026', bills.id);
+    const manuals = await folder('Manuals');
+    const recipes = await folder('Recipes');
+    const priv = await folder('Private');
+    const file = async (folderId, name, content) => {
+      const have = await priya.get(`/documents/folders/${folderId}/files`);
+      if (!have.some((x) => x.name === name)) await priya.post('/documents/files/text', { folderId, name, content });
+    };
+    await file(bills2026.id, 'electricity-october.txt', 'City Power bill — October 2026\nAccount: home\nAmount due: 1,240\nDue date: 28 October 2026\n');
+    await file(bills2026.id, 'water-september.txt', 'Water board bill — September 2026\nAmount due: 310\nPaid on 12 September\n');
+    await file(bills.id, 'Where bills are paid.md', '# Paying bills\n- Electricity: City Power app\n- Water: ward office or online portal\n');
+    await file(manuals.id, 'AC quick guide.md', '# Split AC\n- Clean the filter every 2 weeks in summer\n- Service before April\n- Remote: MODE → COOL, 24°C\n');
+    await file(recipes.id, 'dal.md', '# Dal tadka\nToor dal, turmeric, salt, ghee, cumin, garlic, red chilli.\n');
+    await file(priv.id, 'diary.txt', 'Private notes — no agent has access to this folder.\n');
+    return { bills, recipes, priv };
+  });
+  if (docs) {
+    const agents = await priya.get('/agents');
+    const filing =
+      agents.find((a) => a.name === 'Filing helper') ??
+      (await step('Documents agent "Filing helper": edit Bills, read Recipes, no access to Private', () =>
+        priya.post('/agents', {
+          kind: 'documents',
+          name: 'Filing helper',
+          instructions: 'Keep file names short. Put new notes in Bills.',
+          folders: [
+            { folderId: docs.bills.id, access: 'edit' },
+            { folderId: docs.recipes.id, access: 'read' },
+          ],
+        }),
+      ));
+    if (filing && !(await priya.get(`/agents/${filing.id}/activity`)).length)
+      await step('Filing helper: list files, summarise a bill, make a note', async () => {
+        await priya.post(`/agents/${filing.id}/documents/run`, { instruction: 'List my files' });
+        await priya.post(`/agents/${filing.id}/documents/run`, { instruction: 'Summarise electricity-october.txt' });
+        await priya.post(`/agents/${filing.id}/documents/run`, { instruction: 'Summarise diary.txt' });
+        await priya.post(`/agents/${filing.id}/documents/run`, { instruction: 'Create note Due dates: Electricity 28 October' });
+      });
+  }
+  if (docs) await step('Voice assistant may read the Bills folder (not Private)', () => priya.put('/voice/settings', { documentFolderIds: [docs.bills.id] }));
+  await step('Email agent "Mail helper" on the sample mailbox: one reply sent, one waiting for review', async () => {
+    const box = await priya.post('/mail/accounts/demo');
+    const agents = await priya.get('/agents');
+    const mail =
+      agents.find((a) => a.name === 'Mail helper') ??
+      (await priya.post('/agents', { kind: 'email', name: 'Mail helper', mailAccountId: box.id, instructions: 'Keep replies short and friendly. Sign as Priya.' }));
+    const runs = await priya.get(`/agents/${mail.id}/activity`);
+    if (!runs.some((r) => r.targetRef === 'demo-1')) await priya.post(`/agents/${mail.id}/email/reply`, { messageId: 'demo-1', instruction: 'Say Saturday 10 to 12 works, and please bring the spare part' });
+    if (!runs.some((r) => r.targetRef === 'demo-3')) await priya.post(`/agents/${mail.id}/email/reply`, { messageId: 'demo-3', instruction: 'Ask for the 10:00 slot', reviewFirst: true });
+  });
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 console.log(`LifeSphere sample data → ${API}`);
 const kamla = await signIn('+919810000001', 'Kamla Devi');
@@ -155,7 +239,10 @@ const arjun = await signIn('+919810000005', 'Arjun Kumar');
 const sunita = await signIn('+919810000006', 'Sunita Rao');
 
 if (!FORCE && (await priya.get('/households')).some((h) => h.name === 'Sharma home')) {
-  console.log('\nSample data is already there. Sign in with the numbers above, or run `npm run demo-data -- --force` to add another copy.');
+  // Newer parts are added on their own, so existing demo accounts get them without --force.
+  await documentsAndAgents();
+  await parentCare();
+  console.log('\nSample data is already there (documents, agents and parent care were brought up to date). Sign in with the numbers above, or run `npm run demo-data -- --force` to add another copy.');
   process.exit(0);
 }
 
@@ -505,6 +592,10 @@ if (arjunActive) {
   console.log('  • Providers are waiting for staff approval, so service bookings were skipped.');
   console.log('    Approve them in the staff console (Providers), then run: npm run demo-data -- --force');
 }
+
+// ────────────────────────────────────────────────────────────────────────────
+await documentsAndAgents();
+await parentCare();
 
 // ────────────────────────────────────────────────────────────────────────────
 section('Assistant, knowledge and privacy');

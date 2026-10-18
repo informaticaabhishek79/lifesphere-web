@@ -13,7 +13,7 @@ export interface Page<T> {
 
 // ------------------------------------------------------------------ identity
 export type StaffRole = 'support' | 'moderator' | 'privacy_officer' | 'provider_reviewer' | 'content_admin' | 'super_admin';
-export type Feature = 'lifeos' | 'household' | 'familycare' | 'community' | 'consumer' | 'services' | 'assistant';
+export type Feature = 'lifeos' | 'household' | 'familycare' | 'community' | 'consumer' | 'services' | 'assistant' | 'documents' | 'agents';
 export type Theme = 'system' | 'light' | 'dark' | 'high_contrast';
 
 export interface Accessibility {
@@ -35,7 +35,11 @@ export interface Preferences {
   quietHoursEnd: string | null;
   aiEnabled: boolean;
   aiStoreHistory: boolean;
+  /** null until the person says what they use LifeSphere for. */
+  homeMode: HomeMode | null;
 }
+
+export type HomeMode = 'standard' | 'caregiver' | 'cared_for';
 
 export interface Locality {
   id: ID;
@@ -928,4 +932,133 @@ export interface Conversation {
   createdAt: ISO;
   updatedAt: ISO;
   messages?: { id: ID; role: 'user' | 'assistant'; content: string; citations: Citation[]; proposedActions: AssistantAnswer['proposedActions']; createdAt: ISO }[];
+}
+
+// ------------------------------------------------------------------ documents & agents
+export interface DocFolder {
+  id: string;
+  name: string;
+  parentId: string | null;
+  path: string;
+  fileCount?: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export interface DocFile {
+  id: string;
+  folderId: string;
+  name: string;
+  mimeType: string;
+  sizeBytes: number;
+  readableText: boolean;
+  lastChangedByAgentId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+export type MailProviderName = 'demo' | 'gmail' | 'outlook';
+
+export interface MailAccount {
+  id: string;
+  provider: MailProviderName;
+  address: string;
+  status: string;
+  lastError: string | null;
+  createdAt: string;
+}
+
+export interface MailSummary {
+  id: string;
+  threadId: string | null;
+  from: string;
+  subject: string;
+  date: string | null;
+  snippet: string;
+  unread: boolean;
+}
+
+export interface MailMessage extends MailSummary {
+  to: string;
+  text: string;
+}
+
+export type FolderAccess = 'read' | 'edit';
+
+export interface Agent {
+  id: string;
+  kind: 'email' | 'documents';
+  name: string;
+  instructions: string | null;
+  status: 'active' | 'paused';
+  reviewBeforeSending: boolean;
+  mailbox: MailAccount | null;
+  folders: { folderId: string; path: string; access: FolderAccess }[];
+  lastRunAt: string | null;
+  createdAt: string;
+}
+
+export interface AgentRun {
+  id: string;
+  agentId: string;
+  request: string;
+  targetRef: string | null;
+  targetLabel: string | null;
+  status: 'awaiting_approval' | 'sent' | 'completed' | 'failed' | 'discarded';
+  output: string | null;
+  actions: { tool: string; input: Record<string, unknown>; ok: boolean; note: string }[];
+  error: string | null;
+  simulated: boolean;
+  createdAt: string;
+  finishedAt: string | null;
+}
+
+// ------------------------------------------------------------------ parent care
+export type CareStatus = 'help' | 'missed' | 'waiting' | 'ok' | 'quiet' | 'not_set_up' | 'starting';
+export interface CareItem {
+  id: ID | null;
+  scheduleId: ID;
+  label: string;
+  purpose: 'wellbeing' | 'medicine';
+  dueAt: ISO;
+  /** check-in state, or 'upcoming' for later today */
+  state: string;
+  completedAt: ISO | null;
+  acknowledgedAt: ISO | null;
+  upcoming: boolean;
+}
+export interface CareAppointment {
+  id: ID;
+  title: string;
+  kind: string;
+  startsAt: ISO;
+  locationText: string | null;
+}
+export interface CarePerson {
+  userId: ID;
+  displayName: string | null;
+  label: string | null;
+  shares: { scope: string; status: 'active' | 'pending_cooloff'; effectiveAt: ISO }[];
+  status: CareStatus;
+  today: CareItem[] | null;
+  lastCheckInAt: ISO | null;
+  openHelp: { id: ID; kind: string; message: string | null; status: string; createdAt: ISO; acknowledgedAt: ISO | null }[];
+  appointments: CareAppointment[] | null;
+}
+export interface CarePeople {
+  people: CarePerson[];
+  invitations: { id: ID; label: string | null; requestedScopes: string[]; createdAt: ISO; expiresAt: ISO }[];
+}
+export interface CareToday {
+  today: CareItem[];
+  activeSchedules: number;
+  schedules: { id: ID; label: string; purpose: 'wellbeing' | 'medicine'; timeLocal: string | null; nextDueAt: ISO | null }[];
+  circle: { userId: ID; displayName: string | null; scopes: { scope: string; status: string; effectiveAt: ISO }[] }[];
+  reminders: { id: ID; title: string; fireAt: ISO }[];
+  appointments: CareAppointment[];
+  callTargets: { kind: 'emergency' | 'contact'; label: string; number: string }[];
+  emergencyNumber: string;
+  openHelp: { id: ID; createdAt: ISO; status: string } | null;
 }

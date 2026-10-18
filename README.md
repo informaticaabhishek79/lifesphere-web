@@ -35,6 +35,8 @@ npm run demo-data      # six people plus staff data across every module (details
 | 9810000006 | Sunita Rao | Provider portal; author of a reported spam post |
 | 9999900001 | Admin | Staff console (moderation queue, privacy requests, providers). Needs `npm run db:seed -- --admin=+919999900001` in the API first |
 
+The main person also gets **Documents** (Bills, Manuals, Recipes and a Private folder), a **Filing helper** agent that can edit Bills and read Recipes but cannot see Private, and a **Mail helper** on the sample mailbox with one reply sent and one waiting for review. The **voice assistant** may read the Bills folder (try “What is the amount due on my electricity bill?”). If you already ran the script, running it again adds just these.
+
 Want the data in **your own account**? Run `npm run demo-data -- --phone=<your 10-digit number>` and your account takes Priya's place (household, groups, complaints, provider profile, invitations…).
 
 The script approves the two providers through the staff console API. If the admin has no authenticator yet, it sets one up and prints the key to add to your authenticator app; if it already has one, pass `ADMIN_TOTP_SECRET=<key>` or approve the providers yourself in **Staff console → Providers** and run `npm run demo-data -- --force`. New sharing takes effect after the API's cooling-off period (`GRANT_COOLOFF_MINUTES`, 10 by default).
@@ -72,12 +74,15 @@ Request bodies are typed from the API's OpenAPI document, kept here as `openapi.
 | Area | Routes |
 |---|---|
 | Sign-in | `/sign-in` (phone/email OTP, new-account details, two-step code), `/privacy-notice`, `/invite/contact`, `/invite/household` |
-| Home | `/` dashboard with your widgets and quick actions |
+| Home | `/` — depends on what the person said LifeSphere is for: the family view (caregiver), the simple big-button home (being looked after), or the full dashboard with widgets and quick actions |
+| Getting started | `/get-started` — “What will you use LifeSphere for?”, then inviting a parent (caregiver) or choosing who looks out for you, a daily check-in time, medicines and the first person to call (being looked after). New accounts land here. |
 | My day | `/tasks`, `/tasks/[id]`, `/reminders`, `/calendar` |
 | Home | `/households`, `/households/[id]`, `/lists`, `/lists/[id]`, `/inventory`, `/inventory/[id]`, `/budgets` |
-| Family care | `/contacts`, `/sharing`, `/check-ins`, `/check-ins/events/[id]`, `/help`, `/help/requests/[id]` |
+| Family care | `/care` (everyone who shares with you and how they are today), `/contacts`, `/sharing`, `/check-ins`, `/check-ins/events/[id]`, `/help`, `/help/requests/[id]` |
 | Community | `/community` (feed, groups, invitations, saved, safety & appeals), `/community/groups/[id]`, `/community/posts/[id]`, `/civic` |
 | Help & services | `/services`, `/services/providers/[id]`, `/service-requests`, `/service-requests/[id]`, `/provider-portal`, `/provider-portal/[id]`, `/consumer`, `/consumer/cases/[id]`, `/assistant`, `/knowledge`, `/knowledge/[slug]` |
+| Voice assistant | `/voice` (microphone in the top bar opens it listening; spoken or typed questions, answers read aloud, links to the screens used, folder permissions under “What it can read”) |
+| Agents | `/agents`, `/agents/[id]` (ask a documents agent, activity, edit access), `/email` (connect Gmail / Outlook / sample mailbox, inbox, ask an agent to reply), `/documents`, `/documents/files/[id]` (folders, uploads, notes, bin, preview) |
 | You | `/notifications` (inbox, channel settings, browser push), `/settings` (profile, appearance & accessibility, quiet hours, home screen, features, sign-in & security, activity), `/privacy` |
 | Staff console | `/admin` and sub-pages — users, moderation, providers, privacy requests, catalogue, knowledge, assistant quality, delivery failures, staff, config & plans, audit log. Needs a staff role **and** a session signed in with an authenticator code. Staff screens are in English. |
 
@@ -94,6 +99,9 @@ npm run test:e2e
 
 - `crawl.spec.ts` opens every screen in all ten languages, checks right-to-left for Arabic, and fails on any error. Set `DEMO_PHONE=+919810000002` after `npm run demo-data` to also open detail pages with data.
 - `flows.spec.ts` drives real flows: tasks, reminders, calendar, household, lists, inventory, budget; a contact invitation between two people, sharing with cooling-off, check-ins and the help button end to end; community posts and comments, a consumer case with an AI draft, civic issue, provider profile, service request and the assistant.
+- `agents.spec.ts` creates folders and files, a documents agent that may use only one of them (and checks it cannot see the other), and an email agent reply on the sample mailbox.
+- `care.spec.ts` drives parent care on both sides: a son chooses “I look after a parent” and invites his mother; she accepts on a phone-sized screen, unticks the calendar, sets a check-in time and a medicine, and gets the simple home; his home then shows her.
+- `voice.spec.ts` replaces the browser's speech recogniser with a scripted one, asks a spoken question, and checks the answer comes from the right feature and is read aloud.
 - `admin.spec.ts` signs in the seeded admin with two-step verification and opens every staff screen.
 
 For the family-care test, start the API with `GRANT_COOLOFF_MINUTES=1` (the test waits 65 s for sharing to start). Tests sign up many accounts, so raise the development limits in the API's `.env`: `OTP_MAX_PER_IP_HOUR=10000` and `OTP_MAX_PER_DESTINATION_HOUR=100`.

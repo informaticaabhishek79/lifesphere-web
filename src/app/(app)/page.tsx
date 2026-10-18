@@ -24,6 +24,7 @@ import { useI18n } from '@/i18n';
 import { Badge, Button, Card, CardBody, CardHeader, cx, EmptyState, ErrorNotice, LoadingBlock, Notice } from '@/components/ui';
 import { PriorityBadge, StatusBadge } from '@/components/status';
 import { useToast } from '@/components/dialog';
+import { CaregiverHome, ChooseHomeBanner, ParentHome } from '@/components/care-home';
 
 const QUICK: Record<string, { href: string; icon: React.ComponentType<{ className?: string }>; tone?: 'danger' }> = {
   add_task: { href: '/tasks?new=1', icon: Plus },
@@ -35,7 +36,15 @@ const QUICK: Record<string, { href: string; icon: React.ComponentType<{ classNam
   new_case: { href: '/consumer?new=1', icon: Receipt },
 };
 
-export default function DashboardPage() {
+export default function HomePage() {
+  const { me } = useSession();
+  const mode = me.preferences.homeMode;
+  if (mode === 'caregiver') return <CaregiverHome />;
+  if (mode === 'cared_for') return <ParentHome />;
+  return <DashboardPage chooser={!mode} />;
+}
+
+function DashboardPage({ chooser }: { chooser: boolean }) {
   const { t } = useI18n();
   const { me, fmt } = useSession();
   const qc = useQueryClient();
@@ -67,6 +76,7 @@ export default function DashboardPage() {
         )}
       </header>
 
+      {chooser && <ChooseHomeBanner />}
       {q.isLoading && <LoadingBlock rows={4} />}
       {q.error && <ErrorNotice error={q.error} onRetry={() => q.refetch()} />}
 

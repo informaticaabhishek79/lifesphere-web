@@ -21,6 +21,8 @@ const FORWARD_REQUEST_HEADERS = ['content-type', 'accept', 'accept-language', 'i
 const FORWARD_RESPONSE_HEADERS = [
   'content-type',
   'content-disposition',
+  // Downloads from cloud storage redirect to a short-lived signed URL.
+  'location',
   'content-length',
   'cache-control',
   'idempotent-replay',

@@ -102,7 +102,8 @@ function SignInInner() {
         setMfaToken(res.mfaToken);
         setStep('mfa');
       } else {
-        router.replace(safeNext);
+        // A brand-new account starts with the short "what is LifeSphere for?" setup, unless it came from an invite link.
+        router.replace(res.user.isNew && safeNext === '/' ? '/get-started' : safeNext);
         router.refresh();
       }
     } catch (err) {

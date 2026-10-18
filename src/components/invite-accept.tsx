@@ -23,7 +23,7 @@ export function InviteAccept({
   preview?: (token: string) => Promise<React.ReactNode>;
   accept: (token: string) => Promise<unknown>;
   title: string;
-  successHref: string;
+  successHref: string | (() => string);
 }) {
   const { t } = useI18n();
   const router = useRouter();
@@ -84,7 +84,8 @@ export function InviteAccept({
         sessionStorage.removeItem(storageKey);
       } catch {}
       setState('done');
-      setTimeout(() => router.replace(successHref), 1200);
+      const href = typeof successHref === 'function' ? successHref() : successHref;
+      setTimeout(() => router.replace(href), 1200);
     } catch (e) {
       setError(e);
     } finally {

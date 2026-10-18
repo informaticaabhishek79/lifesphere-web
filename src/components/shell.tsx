@@ -34,6 +34,10 @@ import {
   X,
   Globe,
   ChevronDown,
+  Mail,
+  FolderOpen,
+  Mic,
+  HeartHandshake,
 } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
@@ -74,6 +78,7 @@ function useNav() {
     {
       title: t('nav.sectionFamily'),
       items: [
+        { href: '/care', label: t('nav.family'), icon: HeartHandshake, feature: 'familycare' },
         { href: '/contacts', label: t('nav.contacts'), icon: UserRound, feature: 'familycare' },
         { href: '/sharing', label: t('nav.sharing'), icon: Share2, feature: 'familycare' },
         { href: '/check-ins', label: t('nav.checkins'), icon: HeartPulse, feature: 'familycare' },
@@ -96,6 +101,15 @@ function useNav() {
         { href: '/assistant', label: t('nav.assistant'), icon: Bot, feature: 'assistant' },
         { href: '/knowledge', label: t('nav.knowledge'), icon: BookOpen },
         { href: '/provider-portal', label: t('nav.providerPortal'), icon: Store, feature: 'services' },
+      ],
+    },
+    {
+      title: t('nav.sectionAgents'),
+      items: [
+        { href: '/voice', label: t('nav.voice'), icon: Mic, feature: 'assistant' },
+        { href: '/agents', label: t('nav.agents'), icon: Bot, feature: 'agents' },
+        { href: '/email', label: t('nav.email'), icon: Mail, feature: 'agents' },
+        { href: '/documents', label: t('nav.documents'), icon: FolderOpen, feature: 'documents' },
       ],
     },
     {
@@ -249,9 +263,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const bottom = [
     { href: '/', label: t('nav.home'), icon: Home },
     ...(featureOn('lifeos') ? [{ href: '/tasks', label: t('nav.tasks'), icon: CheckSquare }] : []),
-    ...(featureOn('familycare') ? [{ href: '/check-ins', label: t('nav.family'), icon: HeartPulse }] : []),
+    ...(featureOn('familycare') ? [{ href: me.preferences.homeMode === 'caregiver' ? '/care' : '/check-ins', label: t('nav.family'), icon: HeartPulse }] : []),
     { href: '/notifications', label: t('nav.notifications'), icon: Bell, badge: unread },
   ];
+
+  // Guided setup: no menus, just the steps.
+  if (pathname.startsWith('/get-started')) {
+    return (
+      <div className="min-h-dvh">
+        <header className="flex h-15 items-center justify-between gap-2 border-b border-line px-4 sm:px-6">
+          <Link href="/" aria-label="LifeSphere home">
+            <Logo />
+          </Link>
+          <LanguageSwitch />
+        </header>
+        <main id="main" className="px-4 pt-8 pb-16 sm:px-6">
+          {children}
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
@@ -286,6 +317,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
             <div className="flex-1" />
             <LanguageSwitch />
+            {featureOn('assistant') && (
+              <Link href="/voice?listen=1" className="rounded-lg p-2 text-ink-2 hover:bg-bg-2" aria-label={t('nav.voice')} title={t('nav.voice')}>
+                <Mic className="size-5" />
+              </Link>
+            )}
             <Link href="/notifications" className="relative rounded-lg p-2 text-ink-2 hover:bg-bg-2" aria-label={`${t('nav.notifications')}${unread ? ` (${t('shell.unread', { count: unread })})` : ''}`}>
               <Bell className="size-5" />
               {unread > 0 && (
