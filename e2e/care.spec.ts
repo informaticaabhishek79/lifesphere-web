@@ -88,3 +88,18 @@ test('settings shows what the home is for and links to change it', async ({ page
   await page.getByRole('link', { name: 'Change' }).click();
   await expect(page.getByRole('heading', { name: 'What will you use LifeSphere for?' })).toBeVisible();
 });
+
+test('a caregiver can invite a parent by email instead of phone', async ({ page }) => {
+  const errors = watchErrors(page);
+  await signIn(page, uniquePhone(), 'Ravi', { keepSetup: true });
+  await page.getByTestId('mode-caregiver').click();
+  await page.getByRole('button', { name: 'Dad', exact: true }).click();
+  await page.getByRole('radio', { name: 'Email' }).click();
+  const send = page.getByRole('button', { name: 'Send invitation' });
+  await page.getByLabel("Dad's email").fill('not-an-email');
+  await expect(send).toBeDisabled();
+  await page.getByLabel("Dad's email").fill(`dad.${Date.now()}@example.com`);
+  await send.click();
+  await expect(page.locator('code').first()).toContainText('/invite/contact');
+  expect(errors).toEqual([]);
+});

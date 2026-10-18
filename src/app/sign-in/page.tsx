@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Globe, HeartHandshake, Lock, ShieldCheck, Users } from 'lucide-react';
 import { api, ApiError } from '@/lib/api';
 import type { LoginResult, OtpChallenge } from '@/lib/types';
@@ -11,6 +12,9 @@ import { Logo } from '@/components/brand';
 import { Button, ErrorNotice, Notice } from '@/components/ui';
 import { Checkbox, Input, Segmented } from '@/components/form';
 import { PhoneInput, useDetectedCountry } from '@/components/phone';
+
+const POLICY_VERSION = '2026-10';
+const GOOGLE_NOTICES = new Set(['signup', 'failed', 'cancelled', 'disabled', 'unavailable']);
 
 const SIGNUP_CODES = new Set(['age_confirmation_required', 'policy_acceptance_required', 'display_name_required']);
 
@@ -48,7 +52,17 @@ function SignInInner() {
   const [useRecovery, setUseRecovery] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<unknown>(null);
-  const [notice, setNotice] = useState<string | null>(params.get('expired') ? t('auth.sessionExpired') : null);
+  const googleResult = params.get('google');
+  const [notice, setNotice] = useState<string | null>(
+    params.get('expired') ? t('auth.sessionExpired') : googleResult && GOOGLE_NOTICES.has(googleResult) ? t(`auth.google.${googleResult}` as 'auth.google.failed') : null,
+  );
+  const health = useQuery({
+    queryKey: ['health'],
+    queryFn: () => api.get<{ integrations: Record<string, string> }>('/v1/health/ready'),
+    staleTime: 10 * 60_000,
+    retry: false,
+  });
+  const googleOn = health.data?.integrations?.googleSignIn === 'on';
   const [cooldown, setCooldown] = useState(0);
   const codeRef = useRef<HTMLInputElement>(null);
 
@@ -57,6 +71,17 @@ function SignInInner() {
     const id = setTimeout(() => setCooldown((c) => c - 1), 1000);
     return () => clearTimeout(id);
   }, [cooldown]);
+
+  // Back from Google with a second step to do: the token arrives in the address fragment, which never reaches a server.
+  useEffect(() => {
+    const m = /[#&]mfa=([^&]+)/.exec(window.location.hash);
+    if (m) {
+      setMfaToken(decodeURIComponent(m[1]));
+      setStep('mfa');
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+    if (googleResult === 'signup') setIsNew(true);
+  }, [googleResult]);
 
   useEffect(() => {
     if (step === 'code') codeRef.current?.focus();
@@ -96,7 +121,7 @@ function SignInInner() {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || undefined,
         locale,
         country,
-        ...(isNew ? { displayName: displayName.trim(), ageConfirmed: true, acceptedPolicyVersion: '2026-10' } : {}),
+        ...(isNew ? { displayName: displayName.trim(), ageConfirmed: true, acceptedPolicyVersion: POLICY_VERSION } : {}),
       });
       if (res.status === 'mfa_required') {
         setMfaToken(res.mfaToken);
@@ -116,6 +141,19 @@ function SignInInner() {
     } finally {
       setBusy(false);
     }
+  }
+
+  const googleReady = !isNew || (ageConfirmed && policyAccepted);
+  function continueWithGoogle() {
+    const q = new URLSearchParams({ locale, tz: Intl.DateTimeFormat().resolvedOptions().timeZone || '' });
+    if (safeNext !== '/') q.set('next', safeNext);
+    if (isNew) {
+      q.set('new', '1');
+      q.set('age', '1');
+      q.set('policy', POLICY_VERSION);
+    }
+    setBusy(true);
+    window.location.assign(`/auth/google?${q}`);
   }
 
   async function verifyMfa(e?: React.FormEvent) {
@@ -244,6 +282,20 @@ function SignInInner() {
               <Button type="submit" size="lg" className="w-full" loading={busy} disabled={!destination.trim() || !signupValid}>
                 {busy ? t('auth.sending') : t('auth.sendCode')}
               </Button>
+              {googleOn && (
+                <>
+                  <div className="flex items-center gap-3 text-sm text-muted" aria-hidden>
+                    <span className="h-px flex-1 bg-line" />
+                    {t('auth.google.or')}
+                    <span className="h-px flex-1 bg-line" />
+                  </div>
+                  <Button type="button" variant="secondary" size="lg" className="w-full" disabled={busy || !googleReady} onClick={continueWithGoogle}>
+                    <GoogleMark />
+                    {t('auth.google.button')}
+                  </Button>
+                  {isNew && !googleReady && <p className="text-sm text-muted">{t('auth.google.needBoxes')}</p>}
+                </>
+              )}
               <p className="flex items-start gap-2 text-sm text-muted">
                 <ShieldCheck className="mt-0.5 size-4 shrink-0 text-ok" aria-hidden />
                 {t('auth.privacyPromise')}
@@ -334,6 +386,17 @@ function SignInInner() {
         </div>
       </main>
     </div>
+  );
+}
+
+function GoogleMark() {
+  return (
+    <svg viewBox="0 0 48 48" className="size-5" aria-hidden>
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
+      <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
+      <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z" />
+    </svg>
   );
 }
 

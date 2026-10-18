@@ -11,7 +11,7 @@ import { useContacts } from '@/lib/data';
 import { useSession } from '@/lib/session';
 import type { Contact, ContactInvitation, HomeMode } from '@/lib/types';
 import { useI18n } from '@/i18n';
-import { Checkbox, CheckboxGroup, Input, Switch } from '@/components/form';
+import { Checkbox, CheckboxGroup, Input, Segmented, Switch } from '@/components/form';
 import { PhoneInput, useDetectedCountry } from '@/components/phone';
 import { useReauth } from '@/components/reauth';
 import { InviteLinkNotice } from '@/components/invite-link';
@@ -37,6 +37,10 @@ interface Medicine {
 function toE164(value: string, country: string) {
   const p = parsePhoneNumberFromString(value.trim(), value.trim().startsWith('+') ? undefined : (country as CountryCode));
   return p?.isValid() ? p.number : null;
+}
+
+function isEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
 }
 
 function StepShell({ title, intro, children, onBack, progress }: { title: React.ReactNode; intro?: React.ReactNode; children: React.ReactNode; onBack?: () => void; progress?: [number, number] }) {
@@ -118,12 +122,15 @@ function GetStarted() {
   // ---------------------------------------------------------------- caregiver: invite
   const [country, setCountry] = useDetectedCountry();
   const [phone, setPhone] = useState('');
+  const [inviteBy, setInviteBy] = useState<'phone' | 'email'>('phone');
+  const [email, setEmail] = useState('');
   const [label, setLabel] = useState('');
   const [ask, setAsk] = useState<string[]>(ASK_DEFAULT);
   const [message, setMessage] = useState(() => t('care.invite.defaultMessage', { name: me.profile.displayName }));
   const [link, setLink] = useState<string | null>(null);
   const suggestions = t('care.invite.labelSuggestions').split(/[,،]/).map((s) => s.trim()).filter(Boolean);
   const phoneE164 = toE164(phone, country);
+  const inviteTarget = inviteBy === 'phone' ? (phoneE164 ? { phone: phoneE164 } : null) : isEmail(email) ? { email: email.trim() } : null;
   const who = label.trim() || t('care.invite.them');
 
   // ---------------------------------------------------------------- caregiver: alerts
@@ -133,6 +140,8 @@ function GetStarted() {
   // ---------------------------------------------------------------- cared-for: circle
   const [share, setShare] = useState<Record<string, string[]>>({});
   const [invitePhone, setInvitePhone] = useState('');
+  const [circleBy, setCircleBy] = useState<'phone' | 'email'>('phone');
+  const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
   const [invitedLink, setInvitedLink] = useState<string | null>(null);
   const [invitedNames, setInvitedNames] = useState<string[]>([]);
@@ -221,7 +230,19 @@ function GetStarted() {
                 ))}
               </div>
             </div>
-            <PhoneInput label={t('care.invite.phoneLabel', { name: who })} hint={t('care.invite.phoneHint')} value={phone} onChange={setPhone} country={country} onCountryChange={setCountry} required />
+            <Segmented
+              value={inviteBy}
+              onChange={setInviteBy}
+              options={[
+                { value: 'phone', label: t('care.invite.byPhone') },
+                { value: 'email', label: t('care.invite.byEmail') },
+              ]}
+            />
+            {inviteBy === 'phone' ? (
+              <PhoneInput label={t('care.invite.phoneLabel', { name: who })} hint={t('care.invite.phoneHint')} value={phone} onChange={setPhone} country={country} onCountryChange={setCountry} required />
+            ) : (
+              <Input label={t('care.invite.emailLabel', { name: who })} hint={t('care.invite.emailHint')} type="email" autoComplete="off" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} required />
+            )}
             <CheckboxGroup
               label={t('care.invite.askLabel', { name: who })}
               hint={t('care.invite.askHint')}
@@ -236,11 +257,11 @@ function GetStarted() {
               className="w-full"
               icon={<UserPlus className="size-5" />}
               loading={busy}
-              disabled={!phoneE164 || ask.length === 0}
+              disabled={!inviteTarget || ask.length === 0}
               onClick={() =>
                 run(async () => {
                   if (me.preferences.homeMode !== 'caregiver' && me.preferences.homeMode !== 'cared_for') await setMode('caregiver');
-                  const r = await api.post<ContactInvitation>('/v1/contacts/invitations', { phone: phoneE164, label: label.trim() || undefined, message: message.trim() || undefined, requestedScopes: ask });
+                  const r = await api.post<ContactInvitation>('/v1/contacts/invitations', { ...inviteTarget, label: label.trim() || undefined, message: message.trim() || undefined, requestedScopes: ask });
                   qc.invalidateQueries({ queryKey: ['me'] });
                   qc.invalidateQueries({ queryKey: ['care'] });
                   setLink(r.inviteLink ?? null);
@@ -339,6 +360,7 @@ function GetStarted() {
                 onClick={() => {
                   setInvitedLink(null);
                   setInvitePhone('');
+                  setInviteEmail('');
                   setInviteName('');
                 }}
               >
@@ -348,16 +370,28 @@ function GetStarted() {
           ) : (
             <>
               <Input label={t('care.circle.nameLabel')} value={inviteName} onChange={(e) => setInviteName(e.target.value)} maxLength={40} />
-              <PhoneInput label={t('auth.phoneLabel')} value={invitePhone} onChange={setInvitePhone} country={country} onCountryChange={setCountry} />
+              <Segmented
+                value={circleBy}
+                onChange={setCircleBy}
+                options={[
+                  { value: 'phone', label: t('care.invite.byPhone') },
+                  { value: 'email', label: t('care.invite.byEmail') },
+                ]}
+              />
+              {circleBy === 'phone' ? (
+                <PhoneInput label={t('auth.phoneLabel')} value={invitePhone} onChange={setInvitePhone} country={country} onCountryChange={setCountry} />
+              ) : (
+                <Input label={t('auth.emailLabel')} type="email" autoComplete="off" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} maxLength={254} />
+              )}
               <p className="text-sm text-muted">{t('care.circle.inviteHint')}</p>
               <Button
                 variant="secondary"
                 icon={<UserPlus className="size-4" />}
                 loading={busy}
-                disabled={!toE164(invitePhone, country)}
+                disabled={circleBy === 'phone' ? !toE164(invitePhone, country) : !isEmail(inviteEmail)}
                 onClick={() =>
                   run(async () => {
-                    const r = await api.post<ContactInvitation>('/v1/contacts/invitations', { phone: toE164(invitePhone, country), label: inviteName.trim() || undefined, proposedScopes: scopes });
+                    const r = await api.post<ContactInvitation>('/v1/contacts/invitations', { ...(circleBy === 'phone' ? { phone: toE164(invitePhone, country) } : { email: inviteEmail.trim() }), label: inviteName.trim() || undefined, proposedScopes: scopes });
                     setInvitedNames([...invitedNames, inviteName.trim() || t('care.invite.them')]);
                     setInvitedLink(r.inviteLink ?? null);
                   })

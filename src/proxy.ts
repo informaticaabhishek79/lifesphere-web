@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /** Pages anyone can open. Everything else needs a session cookie (the API still checks every request). */
-const PUBLIC_PREFIXES = ['/sign-in', '/invite', '/about', '/privacy-notice'];
+const PUBLIC_PREFIXES = ['/sign-in', '/invite', '/about', '/privacy-notice', '/auth'];
 
 export function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
