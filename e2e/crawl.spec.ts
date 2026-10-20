@@ -27,7 +27,7 @@ const PAGES = [
   '/care',
   '/get-started',
   '/email',
-  '/documents',
+  '/documents', '/inbox',
   '/notifications',
   '/settings',
   '/privacy',

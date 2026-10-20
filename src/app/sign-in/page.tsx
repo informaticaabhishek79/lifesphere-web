@@ -63,6 +63,7 @@ function SignInInner() {
     retry: false,
   });
   const googleOn = health.data?.integrations?.googleSignIn === 'on';
+  const smsByWhatsApp = (health.data?.integrations?.sms ?? '').includes('whatsapp');
   const [cooldown, setCooldown] = useState(0);
   const codeRef = useRef<HTMLInputElement>(null);
 
@@ -307,7 +308,7 @@ function SignInInner() {
             <form onSubmit={verify} className="rise space-y-5">
               <div>
                 <h2 className="font-display text-3xl font-semibold">{t('auth.codeLabel')}</h2>
-                <p className="mt-2 text-muted">{t('auth.codeSentTo', { to: challenge.sentTo })}</p>
+                <p className="mt-2 text-muted">{t(channel === 'sms' && smsByWhatsApp ? 'auth.codeSentWhatsApp' : 'auth.codeSentTo', { to: challenge.sentTo })}</p>
               </div>
               {challenge.devCode && (
                 <Notice tone="warn">

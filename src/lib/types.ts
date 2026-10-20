@@ -1062,3 +1062,38 @@ export interface CareToday {
   emergencyNumber: string;
   openHelp: { id: ID; createdAt: ISO; status: string } | null;
 }
+
+// ---------------------------------------------------------------- smart inbox
+export type InboxHint = 'tasks' | 'reminders' | 'calendar' | 'shopping' | 'inventory' | 'budget' | 'household' | 'family_care' | 'community' | 'help_services' | 'mixed';
+
+export interface InboxStatus {
+  setUp: boolean;
+  enabled: boolean;
+  rootFolderId: string | null;
+  rootName: string;
+  folders: { name: string; hint: InboxHint; folderId: string | null }[];
+  aiReading: boolean;
+  aiConsentAt: string | null;
+  aiAvailable: boolean;
+  aiTurnedOffInSettings: boolean;
+  householdId: string | null;
+  counts: { total: number; waiting: number; review: number };
+}
+
+export interface InboxImport {
+  id: string;
+  fileId: string | null;
+  fileName: string;
+  folderHint: InboxHint | null;
+  status: 'queued' | 'processing' | 'done' | 'needs_review' | 'failed' | 'skipped' | 'undone';
+  category: string | null;
+  summary: string | null;
+  createdItems: { type: string; id: string; title: string; href: string; parentId?: string }[];
+  suggestions: { type: string; title: string; details: string; href: string }[];
+  skippedItems: { title: string; reason: string }[];
+  error: string | null;
+  reader: 'ai' | 'rules' | 'none' | null;
+  createdAt: string;
+  processedAt: string | null;
+  undoneAt: string | null;
+}

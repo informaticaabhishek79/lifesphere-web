@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useRef, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, ApiError } from '@/lib/api';
 import type { Me, OtpChallenge } from '@/lib/types';
 import { useI18n } from '@/i18n';
@@ -21,6 +21,13 @@ const ReauthContext = createContext<Runner>((fn) => fn());
 export function ReauthProvider({ children }: { children: React.ReactNode }) {
   const { t } = useI18n();
   const qc = useQueryClient();
+  const health = useQuery({
+    queryKey: ['health'],
+    queryFn: () => api.get<{ integrations: Record<string, string> }>('/v1/health/ready'),
+    staleTime: 10 * 60_000,
+    retry: false,
+    enabled: false,
+  });
   const [methods, setMethods] = useState<Method[]>(['sms', 'email', 'totp']);
   const [open, setOpen] = useState(false);
   const [method, setMethod] = useState<Method>('sms');
@@ -135,7 +142,7 @@ export function ReauthProvider({ children }: { children: React.ReactNode }) {
               options={methods.map((m) => ({ value: m, label: m === 'sms' ? t('auth.phoneTab') : m === 'email' ? t('auth.emailTab') : t('auth.mfaCode') }))}
             />
           )}
-          {challenge && <p className="text-sm text-muted">{t('auth.codeSentTo', { to: challenge.sentTo })}</p>}
+          {challenge && <p className="text-sm text-muted">{t(method === 'sms' && (health.data?.integrations?.sms ?? '').includes('whatsapp') ? 'auth.codeSentWhatsApp' : 'auth.codeSentTo', { to: challenge.sentTo })}</p>}
           {challenge?.devCode && <Notice tone="warn">{t('auth.devCode', { code: challenge.devCode })}</Notice>}
           {needsCode && (
             <Input

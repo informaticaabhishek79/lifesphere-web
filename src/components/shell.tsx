@@ -4,46 +4,13 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import {
-  Bell,
-  BookOpen,
-  Bot,
-  Boxes,
-  CalendarDays,
-  CheckSquare,
-  ClipboardList,
-  Hammer,
-  HeartPulse,
-  Home,
-  Landmark,
-  LifeBuoy,
-  LogOut,
-  Menu,
-  MessagesSquare,
-  PiggyBank,
-  Receipt,
-  Settings,
-  Share2,
-  Shield,
-  ShieldCheck,
-  ShoppingCart,
-  Store,
-  TimerReset,
-  UserRound,
-  Users,
-  X,
-  Globe,
-  ChevronDown,
-  Mail,
-  FolderOpen,
-  Mic,
-  HeartHandshake,
-} from 'lucide-react';
+import { Bell, BookOpen, Bot, Boxes, CalendarDays, CheckSquare, ChevronDown, ClipboardList, FolderOpen, Globe, Hammer, HeartHandshake, HeartPulse, Home, Inbox, Landmark, LifeBuoy, LogOut, Mail, Menu, MessagesSquare, Mic, PiggyBank, Receipt, Settings, Share2, Shield, ShieldCheck, ShoppingCart, Store, TimerReset, UserRound, Users, X } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import type { Feature } from '@/lib/types';
 import { LOCALES, useI18n, type Locale } from '@/i18n';
 import { Logo } from './brand';
+import { InboxWatcher } from './inbox-watcher';
 import { Avatar, cx } from './ui';
 
 interface NavItem {
@@ -110,6 +77,7 @@ function useNav() {
         { href: '/agents', label: t('nav.agents'), icon: Bot, feature: 'agents' },
         { href: '/email', label: t('nav.email'), icon: Mail, feature: 'agents' },
         { href: '/documents', label: t('nav.documents'), icon: FolderOpen, feature: 'documents' },
+        { href: '/inbox', label: t('nav.inbox'), icon: Inbox, feature: 'documents' },
       ],
     },
     {
@@ -288,6 +256,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_1fr]">
+      {featureOn('documents') && <InboxWatcher userId={me.id} />}
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2">
         {t('common.skipToContent')}
       </a>
