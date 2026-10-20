@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CheckCircle2, Copy, FolderOpen, FolderSync, HardDrive, Inbox, RotateCcw, Sparkles, Undo2, Upload } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -403,7 +404,7 @@ function ImportCard({ imp }: { imp: InboxImport }) {
   );
 }
 
-export default function InboxPage() {
+function InboxInner() {
   const { t } = useI18n();
   const status = useQuery({ queryKey: ['inbox', 'status'], queryFn: () => api.get<InboxStatus>('/v1/inbox') });
   const imports = useQuery({
@@ -415,6 +416,10 @@ export default function InboxPage() {
   const s = status.data;
   const waiting = (imports.data ?? []).filter((i) => i.status === 'queued' || i.status === 'processing').length;
   const [filter, setFilter] = useState<'all' | 'review'>('all');
+  const params = useSearchParams();
+  const shared = params.get('shared') === null ? null : Number(params.get('shared')) || 0;
+  const [canWatch, setCanWatch] = useState(true);
+  useEffect(() => setCanWatch(folderSyncSupported()), []);
   const shown = (imports.data ?? []).filter((i) => filter === 'all' || i.status === 'needs_review' || i.status === 'failed');
 
   return (
@@ -437,9 +442,12 @@ export default function InboxPage() {
         <div className="space-y-6">
           {!s.enabled && <Notice tone="warn">{t('inbox.pausedNotice')}</Notice>}
           {s.enabled && !s.aiReading && <Notice tone="info">{t('inbox.ai.offNotice')}</Notice>}
+          {shared !== null && (
+            <Notice tone={shared > 0 ? 'ok' : 'warn'}>{shared > 0 ? t('inbox.sharedDone', { count: shared }) : t('inbox.sharedFailed')}</Notice>
+          )}
           <div className="grid gap-5 md:grid-cols-2">
-            <ComputerFolder status={s} />
-            <AddFiles status={s} />
+            {canWatch ? <ComputerFolder status={s} /> : <AddFiles status={s} />}
+            {canWatch ? <AddFiles status={s} /> : <ComputerFolder status={s} />}
           </div>
 
           <section>
@@ -477,6 +485,14 @@ export default function InboxPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function InboxPage() {
+  return (
+    <Suspense>
+      <InboxInner />
+    </Suspense>
   );
 }
 

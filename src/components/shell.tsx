@@ -11,6 +11,7 @@ import type { Feature } from '@/lib/types';
 import { LOCALES, useI18n, type Locale } from '@/i18n';
 import { Logo } from './brand';
 import { InboxWatcher } from './inbox-watcher';
+import { InstallBanner } from './install-app';
 import { Avatar, cx } from './ui';
 
 interface NavItem {
@@ -317,6 +318,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 sm:px-6 lg:px-10 lg:pt-8 lg:pb-12">
+          {pathname === '/' && <InstallBanner />}
           {children}
         </main>
       </div>

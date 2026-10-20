@@ -17,13 +17,19 @@ export const metadata: Metadata = {
   description: 'Privacy-first life management, family care, community and local help.',
   applicationName: 'LifeSphere',
   robots: { index: false, follow: false },
-  icons: { icon: '/icon.svg' },
+  icons: { icon: '/icon.svg', apple: '/icons/apple-touch-icon.png' },
+  manifest: '/manifest.webmanifest',
+  appleWebApp: { capable: true, title: 'LifeSphere', statusBarStyle: 'default' },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#f4f6f8',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f4f6f8' },
+    { media: '(prefers-color-scheme: dark)', color: '#111716' },
+  ],
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

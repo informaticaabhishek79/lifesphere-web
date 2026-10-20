@@ -10,6 +10,7 @@ import type { ActivityItem, Feature, Locality, Me, MfaStatus, OtpChallenge, Pref
 import { LANGUAGE_OPTIONS, useI18n, type Locale } from '@/i18n';
 import { useCountryOptions } from '@/lib/countries';
 import { Badge, Button, ButtonLink, Card, CardBody, CardHeader, ErrorNotice, List, ListItem, LoadingBlock, LoadMore, Notice, PageHeader, Tabs } from '@/components/ui';
+import { InstallAppCard } from '@/components/install-app';
 import { Input, Segmented, Select, Switch, Textarea } from '@/components/form';
 import { FormDialog, useConfirm, useToast } from '@/components/dialog';
 import { useReauth } from '@/components/reauth';
@@ -66,7 +67,12 @@ export default function SettingsPage() {
       <div className="max-w-3xl">
         {tab === 'profile' && <ProfileTab />}
         {tab === 'appearance' && <AppearanceTab />}
-        {tab === 'notifications' && <NotificationsTab />}
+        {tab === 'notifications' && (
+          <div className="space-y-5">
+            <InstallAppCard />
+            <NotificationsTab />
+          </div>
+        )}
         {tab === 'widgets' && <WidgetsTab />}
         {tab === 'features' && <FeaturesTab />}
         {tab === 'security' && <SecurityTab />}
