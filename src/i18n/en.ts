@@ -180,6 +180,7 @@ export const en = {
     termsLink: 'Terms',
     privacyLink: 'Privacy',
     policiesLink: 'All policies',
+    guideLink: 'How to use LifeSphere',
     grievanceLink: 'Grievance Officer',
     signupNeeded: 'This looks like a new account. Tell us a little about you, then we’ll send a fresh code to confirm.',
     google: {

@@ -404,6 +404,7 @@ function SignInInner() {
           )}
         </div>
         <nav aria-label={t('auth.policiesLink')} className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-muted">
+          <Link href="/guide" className="hover:text-brand hover:underline">{t('auth.guideLink')}</Link>
           <Link href="/legal/terms" className="hover:text-brand hover:underline">{t('auth.termsLink')}</Link>
           <Link href="/legal/privacy" className="hover:text-brand hover:underline">{t('auth.privacyLink')}</Link>
           <Link href="/legal/grievance" className="hover:text-brand hover:underline">{t('auth.grievanceLink')}</Link>

@@ -44,6 +44,13 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
             {LEGAL.product} is provided by <strong className="text-ink">{LEGAL.company}</strong>, {LEGAL.address}.
           </p>
           <p className="mt-1">
+            New to LifeSphere? Read{' '}
+            <Link href="/guide" className="text-brand underline">
+              how to use it
+            </Link>
+            .
+          </p>
+          <p className="mt-1">
             Grievance Officer: {LEGAL.grievanceOfficer.name},{' '}
             <a href={LEGAL.grievanceOfficer.phoneHref} className="text-brand underline">
               {LEGAL.grievanceOfficer.phone}

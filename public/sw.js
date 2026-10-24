@@ -3,10 +3,10 @@
  * - Shows web push notifications (payload text follows the user's lock-screen setting).
  * - Shows a friendly offline page when there is no connection.
  * - Keeps the app's own static files (scripts, styles, fonts, icons) for faster starts.
- * - Keeps a copy of the public policy pages, so they open even without a connection.
+ * - Keeps a copy of the public policy and guide pages, so they open even without a connection.
  * Personal data (anything under /api/) is never stored here.
  */
-const VERSION = 'ls-v3';
+const VERSION = 'ls-v4';
 const OFFLINE_URL = '/offline';
 const PRECACHE = [OFFLINE_URL, '/icons/icon-192.png', '/icons/badge-96.png'];
 const LOCAL = ['localhost', '127.0.0.1'].includes(self.location.hostname);
@@ -22,6 +22,17 @@ const PUBLIC_PAGES = [
   '/legal/acceptable-use',
   '/legal/grievance',
   '/legal/contact',
+  '/guide',
+  '/guide/getting-started',
+  '/guide/my-day',
+  '/guide/home',
+  '/guide/family-care',
+  '/guide/community',
+  '/guide/help-and-services',
+  '/guide/assistants',
+  '/guide/documents',
+  '/guide/settings-and-privacy',
+  '/guide/mobile-and-offline',
 ];
 const isPublicPage = (path) => PUBLIC_PAGES.includes(path.replace(/\/$/, '') || '/');
 

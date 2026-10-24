@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /** Pages anyone can open. Everything else needs a session cookie (the API still checks every request). */
-const PUBLIC_PREFIXES = ['/sign-in', '/invite', '/about', '/privacy-notice', '/auth', '/offline', '/legal'];
+const PUBLIC_PREFIXES = ['/sign-in', '/invite', '/about', '/privacy-notice', '/auth', '/offline', '/legal', '/guide'];
 
 /** Set on an old deployment (e.g. Render after moving to MilesWeb) to send everyone to the new address. */
 const CANONICAL = process.env.CANONICAL_URL ? new URL(process.env.CANONICAL_URL) : null;

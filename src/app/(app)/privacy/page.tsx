@@ -129,6 +129,7 @@ export default function PrivacyPage() {
               <Link href="/legal/privacy" className="font-semibold text-brand hover:underline">{t('auth.privacyLink')}</Link>
               <Link href="/legal/grievance" className="font-semibold text-brand hover:underline">{t('auth.grievanceLink')}</Link>
               <Link href="/legal" className="font-semibold text-brand hover:underline">{t('auth.policiesLink')}</Link>
+              <Link href="/guide" className="font-semibold text-brand hover:underline">{t('auth.guideLink')}</Link>
             </CardBody>
           </Card>
 

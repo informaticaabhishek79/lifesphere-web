@@ -185,6 +185,7 @@ export const fr: DeepPartial<Messages> = {
     termsLink: 'Conditions',
     privacyLink: 'Confidentialité',
     policiesLink: 'Toutes les politiques',
+    guideLink: 'Comment utiliser LifeSphere',
     grievanceLink: 'Responsable des réclamations',
     signupNeeded: 'Il s’agit d’un nouveau compte. Dites-nous quelques mots sur vous, puis nous enverrons un nouveau code pour confirmer.',
     google: {

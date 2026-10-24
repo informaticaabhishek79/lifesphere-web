@@ -5,7 +5,7 @@ import { siteUrl } from '@/lib/site-url';
 export default async function robots(): Promise<MetadataRoute.Robots> {
   const base = await siteUrl();
   return {
-    rules: [{ userAgent: '*', allow: ['/legal', '/legal/', '/privacy-notice'], disallow: ['/'] }],
+    rules: [{ userAgent: '*', allow: ['/legal', '/legal/', '/guide', '/guide/', '/privacy-notice'], disallow: ['/'] }],
     sitemap: `${base}/sitemap.xml`,
   };
 }

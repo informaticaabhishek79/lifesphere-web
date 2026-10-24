@@ -185,6 +185,7 @@ export const te: DeepPartial<Messages> = {
     termsLink: 'నిబంధనలు',
     privacyLink: 'గోప్యత',
     policiesLink: 'అన్ని విధానాలు',
+    guideLink: 'LifeSphere ఎలా ఉపయోగించాలి',
     grievanceLink: 'ఫిర్యాదుల అధికారి',
     signupNeeded: 'ఇది కొత్త ఖాతాలా ఉంది. మీ గురించి కొంచెం చెప్పండి, నిర్ధారణ కోసం కొత్త కోడ్ పంపుతాం.',
     google: {

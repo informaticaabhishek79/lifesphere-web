@@ -185,6 +185,7 @@ export const ta: DeepPartial<Messages> = {
     termsLink: 'விதிமுறைகள்',
     privacyLink: 'தனியுரிமை',
     policiesLink: 'அனைத்துக் கொள்கைகள்',
+    guideLink: 'LifeSphere-ஐ எப்படிப் பயன்படுத்துவது',
     grievanceLink: 'குறைதீர் அலுவலர்',
     signupNeeded: 'இது புதிய கணக்கு போலத் தெரிகிறது. உங்களைப் பற்றி சிறிது சொல்லுங்கள், உறுதிப்படுத்த புதிய குறியீடு அனுப்புவோம்.',
     google: {

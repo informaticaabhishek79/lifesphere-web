@@ -185,6 +185,7 @@ export const hi: DeepPartial<Messages> = {
     termsLink: 'शर्तें',
     privacyLink: 'निजता',
     policiesLink: 'सभी नीतियाँ',
+    guideLink: 'LifeSphere का उपयोग कैसे करें',
     grievanceLink: 'शिकायत अधिकारी',
     signupNeeded: 'यह नया खाता लगता है। अपने बारे में थोड़ा बताएँ, फिर पुष्टि के लिए हम नया कोड भेजेंगे।',
     google: {
