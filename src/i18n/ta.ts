@@ -181,6 +181,11 @@ export const ta: DeepPartial<Messages> = {
     ageConfirm: 'எனக்கு 18 வயது அல்லது அதற்கு மேல்',
     policyAccept: 'விதிமுறைகளையும் தனியுரிமை அறிவிப்பையும் ஏற்கிறேன்',
     readPrivacy: 'தனியுரிமை அறிவிப்பைப் படிக்கவும்',
+    readTerms: 'சேவை விதிமுறைகளைப் படிக்கவும்',
+    termsLink: 'விதிமுறைகள்',
+    privacyLink: 'தனியுரிமை',
+    policiesLink: 'அனைத்துக் கொள்கைகள்',
+    grievanceLink: 'குறைதீர் அலுவலர்',
     signupNeeded: 'இது புதிய கணக்கு போலத் தெரிகிறது. உங்களைப் பற்றி சிறிது சொல்லுங்கள், உறுதிப்படுத்த புதிய குறியீடு அனுப்புவோம்.',
     google: {
       or: 'அல்லது',
@@ -349,6 +354,8 @@ export const ta: DeepPartial<Messages> = {
   privacy: {
     yourChoices: 'உங்கள் தேர்வுகள்',
     yourRights: 'உங்கள் உரிமைகள்',
+    policiesTitle: 'கொள்கைகள்',
+    policiesHint: 'சேவை விதிமுறைகள், தனியுரிமைக் கொள்கை மற்றும் LifeSphere பயன்பாட்டின் பிற விதிகள். இவை ஆங்கிலத்தில் வெளியிடப்பட்டுள்ளன.',
     notGiven: 'வழங்கப்படவில்லை',
     withdrawTitle: 'இந்த ஒப்புதலைத் திரும்பப் பெறவா?',
     required: 'LifeSphere பயன்படுத்தத் தேவை',

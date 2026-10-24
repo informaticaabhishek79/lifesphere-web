@@ -181,6 +181,11 @@ export const te: DeepPartial<Messages> = {
     ageConfirm: 'నా వయసు 18 సంవత్సరాలు లేదా అంతకంటే ఎక్కువ',
     policyAccept: 'నిబంధనలు, గోప్యతా నోటీసును అంగీకరిస్తున్నాను',
     readPrivacy: 'గోప్యతా నోటీసు చదవండి',
+    readTerms: 'సేవా నిబంధనలు చదవండి',
+    termsLink: 'నిబంధనలు',
+    privacyLink: 'గోప్యత',
+    policiesLink: 'అన్ని విధానాలు',
+    grievanceLink: 'ఫిర్యాదుల అధికారి',
     signupNeeded: 'ఇది కొత్త ఖాతాలా ఉంది. మీ గురించి కొంచెం చెప్పండి, నిర్ధారణ కోసం కొత్త కోడ్ పంపుతాం.',
     google: {
       or: 'లేదా',
@@ -349,6 +354,8 @@ export const te: DeepPartial<Messages> = {
   privacy: {
     yourChoices: 'మీ ఎంపికలు',
     yourRights: 'మీ హక్కులు',
+    policiesTitle: 'విధానాలు',
+    policiesHint: 'సేవా నిబంధనలు, గోప్యతా విధానం మరియు LifeSphere వినియోగానికి ఇతర నియమాలు. ఇవి ఆంగ్లంలో ప్రచురించబడ్డాయి.',
     notGiven: 'ఇవ్వలేదు',
     withdrawTitle: 'ఈ సమ్మతిని ఉపసంహరించాలా?',
     required: 'LifeSphere వాడటానికి తప్పనిసరి',

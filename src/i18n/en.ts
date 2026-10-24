@@ -176,6 +176,11 @@ export const en = {
     ageConfirm: 'I am 18 years or older',
     policyAccept: 'I accept the Terms and the Privacy Notice',
     readPrivacy: 'Read the Privacy Notice',
+    readTerms: 'Read the Terms of Service',
+    termsLink: 'Terms',
+    privacyLink: 'Privacy',
+    policiesLink: 'All policies',
+    grievanceLink: 'Grievance Officer',
     signupNeeded: 'This looks like a new account. Tell us a little about you, then we’ll send a fresh code to confirm.',
     google: {
       or: 'or',
@@ -344,6 +349,8 @@ export const en = {
   privacy: {
     yourChoices: 'Your choices',
     yourRights: 'Your rights',
+    policiesTitle: 'Policies',
+    policiesHint: 'Terms of Service, Privacy Policy and the other rules for using LifeSphere. They are published in English.',
     notGiven: 'Not given',
     withdrawTitle: 'Withdraw this consent?',
     required: 'Needed to use LifeSphere',

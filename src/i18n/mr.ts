@@ -181,6 +181,11 @@ export const mr: DeepPartial<Messages> = {
     ageConfirm: 'माझे वय 18 वर्षे किंवा अधिक आहे',
     policyAccept: 'मी अटी व गोपनीयता सूचना स्वीकारतो/स्वीकारते',
     readPrivacy: 'गोपनीयता सूचना वाचा',
+    readTerms: 'सेवा अटी वाचा',
+    termsLink: 'अटी',
+    privacyLink: 'गोपनीयता',
+    policiesLink: 'सर्व धोरणे',
+    grievanceLink: 'तक्रार अधिकारी',
     signupNeeded: 'हे नवीन खाते दिसते. तुमच्याबद्दल थोडे सांगा, मग पुष्टीसाठी आम्ही नवा कोड पाठवू.',
     google: {
       or: 'किंवा',
@@ -349,6 +354,8 @@ export const mr: DeepPartial<Messages> = {
   privacy: {
     yourChoices: 'तुमच्या निवडी',
     yourRights: 'तुमचे अधिकार',
+    policiesTitle: 'धोरणे',
+    policiesHint: 'सेवा अटी, गोपनीयता धोरण आणि LifeSphere वापराचे इतर नियम. ते इंग्रजीत प्रकाशित आहेत.',
     notGiven: 'दिलेली नाही',
     withdrawTitle: 'ही संमती मागे घ्यायची?',
     required: 'LifeSphere वापरण्यासाठी आवश्यक',

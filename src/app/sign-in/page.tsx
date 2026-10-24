@@ -281,9 +281,14 @@ function SignInInner() {
                     <Checkbox
                       label={t('auth.policyAccept')}
                       hint={
-                        <Link href="/privacy-notice" target="_blank" className="font-semibold text-brand underline">
-                          {t('auth.readPrivacy')}
-                        </Link>
+                        <span className="flex flex-wrap gap-x-4 gap-y-1">
+                          <Link href="/legal/terms" target="_blank" className="font-semibold text-brand underline">
+                            {t('auth.readTerms')}
+                          </Link>
+                          <Link href="/legal/privacy" target="_blank" className="font-semibold text-brand underline">
+                            {t('auth.readPrivacy')}
+                          </Link>
+                        </span>
                       }
                       checked={policyAccepted}
                       onChange={setPolicyAccepted}
@@ -398,6 +403,12 @@ function SignInInner() {
             </form>
           )}
         </div>
+        <nav aria-label={t('auth.policiesLink')} className="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-muted">
+          <Link href="/legal/terms" className="hover:text-brand hover:underline">{t('auth.termsLink')}</Link>
+          <Link href="/legal/privacy" className="hover:text-brand hover:underline">{t('auth.privacyLink')}</Link>
+          <Link href="/legal/grievance" className="hover:text-brand hover:underline">{t('auth.grievanceLink')}</Link>
+          <Link href="/legal" className="hover:text-brand hover:underline">{t('auth.policiesLink')}</Link>
+        </nav>
       </main>
     </div>
   );

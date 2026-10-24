@@ -1,0 +1,11 @@
+import type { MetadataRoute } from 'next';
+import { siteUrl } from '@/lib/site-url';
+
+/** Search engines may read the public policies; the app itself holds personal data and stays out of search. */
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const base = await siteUrl();
+  return {
+    rules: [{ userAgent: '*', allow: ['/legal', '/legal/', '/privacy-notice'], disallow: ['/'] }],
+    sitemap: `${base}/sitemap.xml`,
+  };
+}

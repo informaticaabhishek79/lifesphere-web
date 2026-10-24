@@ -13,7 +13,12 @@ export default function PublicPrivacyPage() {
         <Logo />
       </Link>
       <h1 className="font-display text-3xl font-semibold">{t('privacy.title')}</h1>
-      <p className="mt-2 mb-6 text-muted">{t('privacy.intro')}</p>
+      <p className="mt-2 mb-6 text-muted">
+        {t('privacy.intro')}{' '}
+        <Link href="/legal" className="font-semibold text-brand underline">
+          {t('auth.policiesLink')}
+        </Link>
+      </p>
       <div className="space-y-5">
         <NoticeSummary />
         <DataInventoryView />

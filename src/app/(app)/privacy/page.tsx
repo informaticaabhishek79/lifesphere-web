@@ -2,8 +2,9 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useState } from 'react';
-import { Download, FileDown, MessageSquareWarning, PenLine, Trash2 } from 'lucide-react';
+import { Download, FileDown, MessageSquareWarning, PenLine, Scale, Trash2 } from 'lucide-react';
 import { api, fileUrl } from '@/lib/api';
 import { useAction } from '@/lib/hooks';
 import { useSession } from '@/lib/session';
@@ -118,6 +119,16 @@ export default function PrivacyPage() {
                 {t('privacy.deleteAccount')}
               </Button>
               <p className="text-[0.82rem] text-muted sm:col-span-2">{t('privacy.exportHint')}</p>
+            </CardBody>
+          </Card>
+
+          <Card>
+            <CardHeader title={t('privacy.policiesTitle')} description={t('privacy.policiesHint')} icon={<Scale className="size-5" />} />
+            <CardBody className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+              <Link href="/legal/terms" className="font-semibold text-brand hover:underline">{t('auth.termsLink')}</Link>
+              <Link href="/legal/privacy" className="font-semibold text-brand hover:underline">{t('auth.privacyLink')}</Link>
+              <Link href="/legal/grievance" className="font-semibold text-brand hover:underline">{t('auth.grievanceLink')}</Link>
+              <Link href="/legal" className="font-semibold text-brand hover:underline">{t('auth.policiesLink')}</Link>
             </CardBody>
           </Card>
 

@@ -181,6 +181,11 @@ export const hi: DeepPartial<Messages> = {
     ageConfirm: 'मेरी उम्र 18 साल या उससे ज़्यादा है',
     policyAccept: 'मैं नियम और निजता सूचना स्वीकार करता/करती हूँ',
     readPrivacy: 'निजता सूचना पढ़ें',
+    readTerms: 'सेवा की शर्तें पढ़ें',
+    termsLink: 'शर्तें',
+    privacyLink: 'निजता',
+    policiesLink: 'सभी नीतियाँ',
+    grievanceLink: 'शिकायत अधिकारी',
     signupNeeded: 'यह नया खाता लगता है। अपने बारे में थोड़ा बताएँ, फिर पुष्टि के लिए हम नया कोड भेजेंगे।',
     google: {
       or: 'या',
@@ -349,6 +354,8 @@ export const hi: DeepPartial<Messages> = {
   privacy: {
     yourChoices: 'आपकी पसंद',
     yourRights: 'आपके अधिकार',
+    policiesTitle: 'नीतियाँ',
+    policiesHint: 'सेवा की शर्तें, निजता नीति और LifeSphere के उपयोग के अन्य नियम। ये अंग्रेज़ी में प्रकाशित हैं।',
     notGiven: 'नहीं दी',
     withdrawTitle: 'यह सहमति वापस लें?',
     required: 'LifeSphere इस्तेमाल के लिए ज़रूरी',

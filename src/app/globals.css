@@ -269,3 +269,82 @@ input[type='datetime-local'] {
 .scrollbar-thin {
   scrollbar-width: thin;
 }
+
+/* Legal pages: readable long-form text. */
+.legal-prose h2 {
+  margin-top: 2.25rem;
+  margin-bottom: 0.6rem;
+  font-family: var(--font-display, inherit);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.legal-prose h3 {
+  margin-top: 1.25rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.legal-prose p,
+.legal-prose li {
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+.legal-prose p + p,
+.legal-prose p + ul,
+.legal-prose ul + p,
+.legal-prose p + ol,
+.legal-prose ol + p {
+  margin-top: 0.75em;
+}
+.legal-prose ul {
+  list-style: disc;
+  padding-inline-start: 1.4rem;
+}
+.legal-prose ol {
+  list-style: decimal;
+  padding-inline-start: 1.4rem;
+}
+.legal-prose li + li {
+  margin-top: 0.35em;
+}
+.legal-prose a {
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.legal-prose h2 a {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration: none;
+}
+.legal-prose h2 a:hover {
+  text-decoration: underline;
+}
+.legal-prose strong {
+  color: var(--ink);
+}
+.legal-prose table {
+  width: 100%;
+  margin-top: 0.75rem;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+.legal-prose th,
+.legal-prose td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.55rem 0.5rem;
+  text-align: start;
+  vertical-align: top;
+  color: var(--ink-2);
+}
+.legal-prose th {
+  color: var(--ink);
+  font-weight: 600;
+}
+.legal-prose .not-prose p,
+.legal-prose .not-prose dd,
+.legal-prose .not-prose dt {
+  margin-top: 0;
+}

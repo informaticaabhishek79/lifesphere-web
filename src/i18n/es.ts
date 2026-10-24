@@ -181,6 +181,11 @@ export const es: DeepPartial<Messages> = {
     ageConfirm: 'Tengo 18 años o más',
     policyAccept: 'Acepto las Condiciones y el Aviso de privacidad',
     readPrivacy: 'Leer el Aviso de privacidad',
+    readTerms: 'Leer los Términos del servicio',
+    termsLink: 'Términos',
+    privacyLink: 'Privacidad',
+    policiesLink: 'Todas las políticas',
+    grievanceLink: 'Responsable de reclamaciones',
     signupNeeded: 'Parece una cuenta nueva. Cuéntanos un poco sobre ti y te enviaremos un código nuevo para confirmar.',
     google: {
       or: 'o',
@@ -349,6 +354,8 @@ export const es: DeepPartial<Messages> = {
   privacy: {
     yourChoices: 'Tus decisiones',
     yourRights: 'Tus derechos',
+    policiesTitle: 'Políticas',
+    policiesHint: 'Términos del servicio, Política de privacidad y las demás normas de uso de LifeSphere. Están publicados en inglés.',
     notGiven: 'No dado',
     withdrawTitle: '¿Retirar este consentimiento?',
     required: 'Necesario para usar LifeSphere',
