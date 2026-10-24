@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" preserveAspectRatio="xMidYMin slice">
+  <!-- LifeSphere sign-in illustration, sky layer. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#062f2d"/>
+      <stop offset=".55" stop-color="#0d5c58"/>
+      <stop offset="1" stop-color="#1b6a60"/>
+    </linearGradient>
+    <radialGradient id="duskX" cx="400" cy="880" r="520" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f3a660" stop-opacity=".95"/>
+      <stop offset=".45" stop-color="#c9703f" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#c9703f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow" r=".5">
+      <stop offset="0" stop-color="#ffd58f" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ffd58f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="moonGlow" r=".5">
+      <stop offset="0" stop-color="#fbe9c2" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#fbe9c2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="spill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd58f" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#ffd58f" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky, dusk glow, moon and stars -->
+  <rect width="800" height="1000" fill="url(#sky)"/>
+  <circle cx="655" cy="170" r="90" fill="url(#moonGlow)"/>
+  <circle cx="655" cy="170" r="30" fill="#fbe9c2"/>
+  <circle cx="667" cy="162" r="27" fill="#0a4a47" opacity=".18"/>
+  <g fill="#fff" opacity=".55">
+    <circle cx="90" cy="70" r="1.6"/><circle cx="210" cy="140" r="1.2"/><circle cx="330" cy="60" r="1.4"/>
+    <circle cx="470" cy="120" r="1.1"/><circle cx="560" cy="60" r="1.5"/><circle cx="740" cy="90" r="1.2"/>
+    <circle cx="760" cy="280" r="1.3"/><circle cx="580" cy="250" r="1"/><circle cx="420" cy="230" r="1.2"/>
+    <circle cx="150" cy="260" r="1"/><circle cx="40" cy="330" r="1.3"/><circle cx="700" cy="380" r="1"/>
+  </g>
+
+</svg>

@@ -29,6 +29,8 @@ test('the app can be installed: manifest, icons and the service worker are in pl
   // With no connection, pages show the offline screen instead of a browser error.
   await page.reload();
   await page.waitForFunction(() => !!navigator.serviceWorker.controller);
+  // On a cold development server the offline page takes a moment to be built and stored.
+  await expect.poll(() => page.evaluate(async () => !!(await caches.match('/offline'))), { timeout: 30_000 }).toBe(true);
   await page.context().setOffline(true);
   await page.goto('/tasks').catch(() => undefined);
   await expect(page.getByRole('heading', { name: 'You are offline' })).toBeVisible();

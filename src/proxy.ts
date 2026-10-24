@@ -3,8 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 /** Pages anyone can open. Everything else needs a session cookie (the API still checks every request). */
 const PUBLIC_PREFIXES = ['/sign-in', '/invite', '/about', '/privacy-notice', '/auth', '/offline'];
 
+/** Set on an old deployment (e.g. Render after moving to MilesWeb) to send everyone to the new address. */
+const CANONICAL = process.env.CANONICAL_URL ? new URL(process.env.CANONICAL_URL) : null;
+
 export function proxy(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
+  if (CANONICAL) {
+    const host = req.headers.get('x-forwarded-host') ?? req.headers.get('host');
+    if (host && host !== CANONICAL.host) return NextResponse.redirect(new URL(pathname + search, CANONICAL), 308);
+  }
   const signedIn = Boolean(req.cookies.get('ls_rt')?.value);
   const isPublic = PUBLIC_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 

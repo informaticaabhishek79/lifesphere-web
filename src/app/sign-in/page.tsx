@@ -175,10 +175,11 @@ function SignInInner() {
   return (
     <div className="grid min-h-dvh lg:grid-cols-[1.05fr_1fr]">
       {/* Brand panel */}
-      <aside className="relative hidden overflow-hidden bg-brand text-brand-ink lg:flex lg:flex-col lg:justify-between lg:p-12">
-        <div aria-hidden className="pointer-events-none absolute -top-24 -end-24 size-[28rem] rounded-full bg-white/8" />
-        <div aria-hidden className="pointer-events-none absolute bottom-[-10rem] start-[-6rem] size-[30rem] rounded-full border-[3rem] border-white/6" />
-        <div aria-hidden className="pointer-events-none absolute top-[18%] end-20 size-20 rounded-full bg-accent/80" />
+      <aside className="relative hidden overflow-hidden bg-[#062f2d] text-white lg:flex lg:flex-col lg:gap-10 lg:px-12 lg:pt-12">
+        {/* An evening neighbourhood: a mother checks in from her balcony, her son walks home, a neighbour waves. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/sign-in-sky.svg" alt="" aria-hidden className="pointer-events-none absolute inset-0 size-full object-cover object-top" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_75%_45%_at_50%_100%,rgb(243_166_96/0.85),rgb(201_112_63/0.35)_45%,transparent_75%)]" />
         <div className="relative">
           <span className="inline-flex items-center gap-2.5">
             <svg viewBox="0 0 40 40" className="size-10" aria-hidden>
@@ -189,9 +190,9 @@ function SignInInner() {
             <span className="font-display text-2xl font-semibold">LifeSphere</span>
           </span>
         </div>
-        <div className="relative max-w-lg">
-          <h1 className="font-display text-[2.8rem] leading-[1.08] font-semibold">{t('app.tagline')}</h1>
-          <ul className="mt-10 space-y-5 text-[1.02rem] text-white/90">
+        <div className="relative max-w-lg [text-shadow:0_1px_12px_rgb(3_30_28/0.6)]">
+          <h1 className="font-display text-[2.6rem] leading-[1.08] font-semibold">{t('app.tagline')}</h1>
+          <ul className="mt-8 space-y-4 text-[1.02rem] text-white/95">
             <li className="flex gap-3">
               <HeartHandshake className="mt-0.5 size-5 shrink-0" aria-hidden />
               <span>{t('auth.pitchFamily')}</span>
@@ -206,7 +207,11 @@ function SignInInner() {
             </li>
           </ul>
         </div>
-        <div className="relative text-sm text-white/70">© {new Date().getFullYear()} LifeSphere</div>
+        <div aria-hidden className="relative -mx-12 min-h-[200px] flex-1">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/sign-in-town.svg" alt="" className="pointer-events-none absolute inset-0 size-full object-cover object-bottom" />
+        </div>
+        <div className="absolute end-6 bottom-1.5 text-xs text-white/60">© {new Date().getFullYear()} LifeSphere</div>
       </aside>
 
       {/* Form */}
@@ -224,6 +229,14 @@ function SignInInner() {
               ))}
             </select>
           </label>
+        </div>
+        {/* Phones and tablets: a strip of the same neighbourhood scene above the form. */}
+        <div aria-hidden className="relative mt-5 h-32 overflow-hidden rounded-2xl bg-[#062f2d] sm:h-40 lg:hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/sign-in-sky.svg" alt="" className="absolute inset-0 size-full object-cover object-top" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_70%_at_50%_100%,rgb(243_166_96/0.8),rgb(201_112_63/0.3)_45%,transparent_75%)]" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/sign-in-town.svg" alt="" className="absolute inset-0 size-full object-cover object-bottom" />
         </div>
 
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-10">
