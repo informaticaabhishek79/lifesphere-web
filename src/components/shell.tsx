@@ -224,7 +224,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { data: unread = 0 } = useUnread();
   const { data: health } = useIntegrations();
   // Channels people would notice. Phone-app push is left out until there is a phone app to receive it.
-  const simulatedList = health ? (['sms', 'email', 'webPush', 'ai'] as const).filter((k) => health.integrations[k] === 'simulated' || (k === 'ai' && health.integrations.ai === 'mock')) : [];
+  // SMS is left out of this banner too: it's deliberately left in mock mode until Twilio is upgraded,
+  // so a persistent "test mode" warning about it on every page isn't useful signal.
+  const simulatedList = health ? (['email', 'webPush', 'ai'] as const).filter((k) => health.integrations[k] === 'simulated' || (k === 'ai' && health.integrations.ai === 'mock')) : [];
   const simulated = simulatedList.length > 0;
 
   useEffect(() => {
