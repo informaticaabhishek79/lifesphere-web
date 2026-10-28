@@ -11,6 +11,14 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // Shared hosting caps how many processes this account may run at once. Next.js's build-time
+  // page-data collection auto-detects CPU count and spawns one worker per CPU — on a container
+  // that reports the HOST's full core count (not this account's actual quota), that means dozens
+  // of workers and `EAGAIN` ("resource temporarily unavailable") when the OS refuses to spawn more.
+  // Pinning this to 1 makes the build run page-data collection serially instead.
+  experimental: {
+    cpus: 1,
+  },
   async headers() {
     return [
       { source: '/:path*', headers: securityHeaders },
