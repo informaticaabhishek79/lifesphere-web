@@ -10,7 +10,7 @@ import type { DocFolder } from '@/lib/types';
 import { useI18n } from '@/i18n';
 import { useFolders } from '@/components/agents';
 import { Dialog } from '@/components/dialog';
-import { Checkbox, Switch } from '@/components/form';
+import { Checkbox, Segmented, Switch } from '@/components/form';
 import { Badge, Button, Card, cx, errorMessage, Notice, PageHeader } from '@/components/ui';
 
 interface Answer {
@@ -19,15 +19,21 @@ interface Answer {
   usedTools: string[];
   simulated: boolean;
 }
+interface CompanionAnswer {
+  reply: string;
+  concern: boolean;
+}
 interface Settings {
   speakAnswers: boolean;
   documentFolders: { folderId: string; path: string }[];
   aiConnected: boolean;
+  companionChatEnabled: boolean;
 }
 interface Message {
   role: 'user' | 'assistant';
   text: string;
   meta?: Answer;
+  concern?: boolean;
   error?: boolean;
 }
 
@@ -61,8 +67,12 @@ function FolderSettings({ open, onClose, settings }: { open: boolean; onClose: (
   const qc = useQueryClient();
   const folders = useFolders(open);
   const [chosen, setChosen] = useState<Set<string>>(new Set());
+  const [companion, setCompanion] = useState(false);
   useEffect(() => {
-    if (open) setChosen(new Set(settings?.documentFolders.map((f) => f.folderId) ?? []));
+    if (open) {
+      setChosen(new Set(settings?.documentFolders.map((f) => f.folderId) ?? []));
+      setCompanion(settings?.companionChatEnabled ?? false);
+    }
   }, [open, settings]);
   // A folder inside a chosen folder is already included.
   const covered = (f: DocFolder) => {
@@ -86,7 +96,7 @@ function FolderSettings({ open, onClose, settings }: { open: boolean; onClose: (
           </Button>
           <Button
             onClick={async () => {
-              await api.put('/v1/voice/settings', { documentFolderIds: [...chosen] });
+              await api.put('/v1/voice/settings', { documentFolderIds: [...chosen], companionChatEnabled: companion });
               qc.invalidateQueries({ queryKey: ['voice', 'settings'] });
               onClose();
             }}
@@ -96,6 +106,9 @@ function FolderSettings({ open, onClose, settings }: { open: boolean; onClose: (
         </>
       }
     >
+      <div className="mb-5 border-b border-line pb-5">
+        <Switch label={t('voice.companion.toggle')} hint={t('voice.companion.toggleHint')} checked={companion} onChange={setCompanion} />
+      </div>
       <div className="mb-2 text-sm font-semibold">{t('voice.folders')}</div>
       {!folders.data?.length ? (
         <p className="text-sm text-muted">{t('voice.noFolders')}</p>
@@ -138,6 +151,7 @@ function Inner() {
   const [handsFree, setHandsFree] = useState(false);
   const [voiceError, setVoiceError] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [mode, setMode] = useState<'assistant' | 'companion'>('assistant');
   const [supported, setSupported] = useState(true);
   const rec = useRef<Recognition | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
@@ -227,17 +241,24 @@ function Inner() {
       setText('');
       setBusy(true);
       try {
-        const r = await api.post<Answer>('/v1/voice/ask', { question, history });
-        setMessages((m) => [...m, { role: 'assistant', text: r.answer, meta: r }]);
-        if (speak) sayAloud(r.answer, () => handsFreeRef.current && listen());
-        else if (handsFreeRef.current) listen();
+        if (mode === 'companion') {
+          const r = await api.post<CompanionAnswer>('/v1/voice/companion', { message: question, history });
+          setMessages((m) => [...m, { role: 'assistant', text: r.reply, concern: r.concern }]);
+          if (speak) sayAloud(r.reply, () => handsFreeRef.current && listen());
+          else if (handsFreeRef.current) listen();
+        } else {
+          const r = await api.post<Answer>('/v1/voice/ask', { question, history });
+          setMessages((m) => [...m, { role: 'assistant', text: r.answer, meta: r }]);
+          if (speak) sayAloud(r.answer, () => handsFreeRef.current && listen());
+          else if (handsFreeRef.current) listen();
+        }
       } catch (e) {
         setMessages((m) => [...m, { role: 'assistant', text: errorMessage(e, t), error: true }]);
       } finally {
         setBusy(false);
       }
     },
-    [busy, messages, speak, sayAloud, listen, t],
+    [busy, messages, mode, speak, sayAloud, listen, t],
   );
 
   // /voice?listen=1 (from the microphone button in the top bar) starts listening straight away.
@@ -255,7 +276,7 @@ function Inner() {
     qc.invalidateQueries({ queryKey: ['voice', 'settings'] });
   };
 
-  const suggestions = ['s1', 's2', 's3', 's4', 's5', 's6'].map((k) => t(`voice.${k}`));
+  const suggestions = mode === 'companion' ? ['c1', 'c2', 'c3', 'c4'].map((k) => t(`voice.companion.${k}`)) : ['s1', 's2', 's3', 's4', 's5', 's6'].map((k) => t(`voice.${k}`));
 
   return (
     <div className="max-w-3xl">
@@ -279,6 +300,25 @@ function Inner() {
         <Notice tone="warn" className="mb-4">
           {t('voice.simulatedNote')}
         </Notice>
+      )}
+
+      {settings.data?.companionChatEnabled ? (
+        <Segmented
+          className="mb-4"
+          value={mode}
+          onChange={(v) => {
+            setMode(v);
+            setMessages([]);
+          }}
+          options={[
+            { value: 'assistant', label: t('voice.companion.assistantTab') },
+            { value: 'companion', label: t('voice.companion.companionTab') },
+          ]}
+        />
+      ) : (
+        <button type="button" onClick={() => setShowSettings(true)} className="mb-4 block text-sm font-semibold text-brand hover:underline">
+          {t('voice.companion.enablePrompt')}
+        </button>
       )}
 
       <Card className="p-5">
@@ -356,6 +396,7 @@ function Inner() {
                 <p className="whitespace-pre-wrap" dir="auto">
                   {m.text}
                 </p>
+                {m.concern && <p className="mt-2 text-xs text-muted">{t('voice.companion.concernNote')}</p>}
                 {m.meta && (
                   <div className="mt-2 space-y-2">
                     {m.meta.usedTools.length > 0 && (
