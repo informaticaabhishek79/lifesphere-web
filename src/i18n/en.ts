@@ -1367,6 +1367,18 @@ export const en = {
     s4: 'How much have I spent this month?',
     s5: 'When does my water purifier warranty end?',
     s6: 'How do I set up a check-in?',
+    companion: {
+      toggle: 'Companion chat',
+      toggleHint: 'Open-ended chatting — the weather, your day, a joke. Off by default; it never reads or changes anything in LifeSphere.',
+      assistantTab: 'Assistant',
+      companionTab: 'Just chat',
+      enablePrompt: 'Turn on companion chat for everyday conversation',
+      concernNote: 'I let the people who look after you know you mentioned this.',
+      c1: 'How are you today?',
+      c2: 'Tell me something nice',
+      c3: 'What a lovely day',
+      c4: 'Tell me a joke',
+    },
   },
   care: {
     familyTitle: 'Family',
