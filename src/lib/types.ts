@@ -1036,6 +1036,16 @@ export interface CareAppointment {
   startsAt: ISO;
   locationText: string | null;
 }
+export interface CareWeeklyTally {
+  total: number;
+  completed: number;
+  missed: number;
+}
+export interface CareWeeklyInsight {
+  medicine: CareWeeklyTally;
+  wellbeing: CareWeeklyTally;
+  text: string | null;
+}
 export interface CarePerson {
   userId: ID;
   displayName: string | null;
@@ -1043,6 +1053,8 @@ export interface CarePerson {
   shares: { scope: string; status: 'active' | 'pending_cooloff'; effectiveAt: ISO }[];
   status: CareStatus;
   today: CareItem[] | null;
+  /** Plain-language rollup of the last 7 days, e.g. "Missed medication twice this week"; null when nothing's shared yet. */
+  weekly: CareWeeklyInsight | null;
   lastCheckInAt: ISO | null;
   openHelp: { id: ID; kind: string; message: string | null; status: string; createdAt: ISO; acknowledgedAt: ISO | null }[];
   appointments: CareAppointment[] | null;
