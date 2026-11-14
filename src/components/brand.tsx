@@ -1,4 +1,10 @@
-import { cx } from './ui';
+import clsx from 'clsx';
+
+// Logo has no client-only behavior (no hooks, no handlers) and is rendered from plain server
+// components too (e.g. the public landing page), so it imports clsx directly rather than the
+// ('use client') ui module's cx re-export — calling a client module's export directly from
+// server code throws, even for a trivial helper like this one.
+const cx = clsx;
 
 /** LifeSphere mark: a sphere held by two arcs — personal life inside, people around it. */
 export function Logo({ className, withWord = true }: { className?: string; withWord?: boolean }) {
