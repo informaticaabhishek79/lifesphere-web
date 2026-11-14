@@ -6,6 +6,7 @@ import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import type { CareItem, CarePeople, CarePerson, CareStatus, CareToday } from '@/lib/types';
 import { useI18n } from '@/i18n';
+import { SuggestMedicineButton } from './care-suggestions';
 import { useToast } from './dialog';
 import { Avatar, Badge, Button, ButtonLink, Card, cx, EmptyState, ErrorNotice, LoadingBlock } from './ui';
 
@@ -154,6 +155,12 @@ function PersonCard({ person }: { person: CarePerson }) {
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+
+        {person.shares.some((s) => s.scope === 'checkins.suggest' && s.status === 'active') && (
+          <div>
+            <SuggestMedicineButton targetUserId={person.userId} targetName={name} />
           </div>
         )}
 

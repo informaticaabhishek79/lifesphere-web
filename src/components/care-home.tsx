@@ -7,6 +7,7 @@ import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import { useI18n } from '@/i18n';
 import { CareItemRow, FamilyOverview, isOpen, useCareToday, useConfirmItem } from './care';
+import { PendingSuggestions } from './care-suggestions';
 import { useToast } from './dialog';
 import { Button, ButtonLink, Card, cx, ErrorNotice, LoadingBlock, Notice } from './ui';
 
@@ -92,6 +93,8 @@ export function ParentHome() {
   return (
     <div className="mx-auto max-w-2xl">
       <Greeting big />
+
+      <PendingSuggestions />
 
       {d.openHelp && (
         <Notice tone="danger" className="mb-5" action={<Link href={`/help/requests/${d.openHelp.id}`} className="font-semibold underline">{t('common.view')}</Link>}>
