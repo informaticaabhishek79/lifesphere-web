@@ -18,9 +18,15 @@ import {
   Users,
   Wrench,
 } from 'lucide-react';
+import clsx from 'clsx';
 import { Logo } from '@/components/brand';
-import { ButtonLink, Card, cx } from '@/components/ui';
+import { ButtonLink, Card } from '@/components/ui';
 import { LEGAL } from '@/lib/legal';
+
+// cx is a plain re-export of clsx from the ('use client') ui module; calling a client module's
+// export directly (rather than rendering it as a component) isn't allowed from a server component,
+// so this page imports clsx itself instead.
+const cx = clsx;
 
 // Public landing page: indexable, unlike the signed-in app (the parent layout defaults to noindex).
 export const metadata: Metadata = {
