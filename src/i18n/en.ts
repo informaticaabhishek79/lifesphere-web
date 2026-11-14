@@ -1419,6 +1419,7 @@ export const en = {
       help_alerts: 'Help alerts',
       help_location: 'Location when asking for help',
       calendar_view: 'Shared appointments',
+      checkins_suggest: 'Propose reminders',
     },
     scopeMine: {
       checkins_view: 'sees your check-ins',
@@ -1426,6 +1427,18 @@ export const en = {
       help_alerts: 'told when you press Help',
       help_location: 'sees where you are when you press Help',
       calendar_view: 'sees appointments you share',
+      checkins_suggest: 'can propose reminders for you to approve',
+    },
+    suggestions: {
+      title: 'Suggested reminders',
+      addMedicine: '{name} suggests adding "{medicine}" to your reminders',
+      approve: 'Approve',
+      decline: 'Decline',
+      suggest: 'Suggest a reminder',
+      dialogTitle: 'Suggest a reminder for {name}',
+      dialogHint: "{name} will see this and decide — nothing is added until they approve it.",
+      medicineName: 'Medicine name',
+      medicineTime: 'Time',
     },
     ask: {
       checkins_view: 'See whether they checked in and took their medicines',
@@ -1664,6 +1677,7 @@ export const en = {
       checkins_alerts: 'Be alerted if I miss a check-in',
       help_alerts: 'Be alerted when I press Get help',
       help_location: 'See my location when I press Get help',
+      checkins_suggest: 'Propose check-in or medicine times for me to approve',
     },
     grantStatus: { pending_cooloff: 'Starts soon', active: 'Active', revoked: 'Stopped', expired: 'Expired' },
     checkInKind: {

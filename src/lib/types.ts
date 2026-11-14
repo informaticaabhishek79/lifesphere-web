@@ -489,8 +489,8 @@ export interface BudgetLine {
 }
 
 // ------------------------------------------------------------------ FamilyCare
-export type GrantScope = 'tasks.view' | 'tasks.assign' | 'calendar.view' | 'checkins.view' | 'checkins.alerts' | 'help.alerts' | 'help.location';
-export const GRANT_SCOPES: GrantScope[] = ['tasks.view', 'tasks.assign', 'calendar.view', 'checkins.view', 'checkins.alerts', 'help.alerts', 'help.location'];
+export type GrantScope = 'tasks.view' | 'tasks.assign' | 'calendar.view' | 'checkins.view' | 'checkins.alerts' | 'help.alerts' | 'help.location' | 'checkins.suggest';
+export const GRANT_SCOPES: GrantScope[] = ['tasks.view', 'tasks.assign', 'calendar.view', 'checkins.view', 'checkins.alerts', 'help.alerts', 'help.location', 'checkins.suggest'];
 
 export interface ContactGrant {
   id: ID;
@@ -1073,6 +1073,24 @@ export interface CareToday {
   callTargets: { kind: 'emergency' | 'contact'; label: string; number: string }[];
   emergencyNumber: string;
   openHelp: { id: ID; createdAt: ISO; status: string } | null;
+}
+
+export type CareSuggestionStatus = 'pending' | 'approved' | 'declined' | 'withdrawn';
+export interface CareSuggestion {
+  id: ID;
+  targetUserId: ID;
+  proposedBy: ID;
+  kind: 'add_medicine';
+  payload: { name: string; times: string[] };
+  status: CareSuggestionStatus;
+  createdAt: ISO;
+  decidedAt: ISO | null;
+}
+export interface CareSuggestions {
+  /** Suggestions about me, for me to decide. */
+  forMe: (CareSuggestion & { proposedByName: string | null })[];
+  /** Suggestions I made, to track what happened to them. */
+  byMe: (CareSuggestion & { targetName: string | null })[];
 }
 
 // ---------------------------------------------------------------- smart inbox
