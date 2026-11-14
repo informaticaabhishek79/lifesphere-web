@@ -4,7 +4,7 @@ export const STATE_COOKIE = 'ls_google';
 
 /** Only same-site paths, never another site. */
 export function safeNext(next: string | null | undefined) {
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
+  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/home';
 }
 
 /** Absolute address on the public host (behind Render's proxy the server itself listens on another port). */

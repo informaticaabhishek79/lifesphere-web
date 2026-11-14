@@ -31,7 +31,7 @@ function SignInInner() {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get('next');
-  const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
+  const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : '/home';
 
   const [step, setStep] = useState<'start' | 'code' | 'mfa'>('start');
   const [channel, setChannel] = useState<'sms' | 'email'>('sms');
@@ -129,7 +129,7 @@ function SignInInner() {
         setStep('mfa');
       } else {
         // A brand-new account starts with the short "what is LifeSphere for?" setup, unless it came from an invite link.
-        router.replace(res.user.isNew && safeNext === '/' ? '/get-started' : safeNext);
+        router.replace(res.user.isNew && safeNext === '/home' ? '/get-started' : safeNext);
         router.refresh();
       }
     } catch (err) {
@@ -147,7 +147,7 @@ function SignInInner() {
   const googleReady = !isNew || (ageConfirmed && policyAccepted);
   function continueWithGoogle() {
     const q = new URLSearchParams({ locale, tz: Intl.DateTimeFormat().resolvedOptions().timeZone || '' });
-    if (safeNext !== '/') q.set('next', safeNext);
+    if (safeNext !== '/home') q.set('next', safeNext);
     if (isNew) {
       q.set('new', '1');
       q.set('age', '1');

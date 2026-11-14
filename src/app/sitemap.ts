@@ -5,8 +5,9 @@ import { siteUrl } from '@/lib/site-url';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = await siteUrl();
-  const updated = new Date('2026-10-24');
+  const updated = new Date('2026-11-14');
   return [
+    { url: `${base}/`, lastModified: updated, changeFrequency: 'monthly', priority: 1 },
     { url: `${base}/legal`, lastModified: updated, changeFrequency: 'monthly', priority: 0.8 },
     ...POLICIES.map((p) => ({ url: `${base}${policyHref(p.slug)}`, lastModified: updated, changeFrequency: 'monthly' as const, priority: 0.7 })),
     { url: `${base}/guide`, lastModified: updated, changeFrequency: 'monthly', priority: 0.8 },

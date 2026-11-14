@@ -6,12 +6,13 @@
  * - Keeps a copy of the public policy and guide pages, so they open even without a connection.
  * Personal data (anything under /api/) is never stored here.
  */
-const VERSION = 'ls-v4';
+const VERSION = 'ls-v5';
 const OFFLINE_URL = '/offline';
 const PRECACHE = [OFFLINE_URL, '/icons/icon-192.png', '/icons/badge-96.png'];
 const LOCAL = ['localhost', '127.0.0.1'].includes(self.location.hostname);
 /** Public pages with no personal data in them: safe to keep a copy of. */
 const PUBLIC_PAGES = [
+  '/',
   '/legal',
   '/legal/terms',
   '/legal/privacy',
