@@ -1,7 +1,7 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { AlertTriangle, CalendarDays, Clock, HeartPulse, LifeBuoy, Pill, UserPlus } from 'lucide-react';
+import { AlertTriangle, CalendarDays, Clock, HeartPulse, LifeBuoy, Pill, TrendingUp, UserPlus } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useSession } from '@/lib/session';
 import type { CareItem, CarePeople, CarePerson, CareStatus, CareToday } from '@/lib/types';
@@ -98,6 +98,13 @@ function PersonCard({ person }: { person: CarePerson }) {
       </div>
 
       <div className="space-y-5 px-5 py-5">
+        {person.weekly?.text && (
+          <div className="flex items-start gap-2.5 rounded-xl bg-surface-2 px-3.5 py-3 text-sm text-ink-2">
+            <TrendingUp className="mt-0.5 size-4 shrink-0 text-muted" aria-hidden />
+            <span>{person.weekly.text}</span>
+          </div>
+        )}
+
         {person.openHelp.map((h) => (
           <div key={h.id} className="flex flex-wrap items-center gap-3 rounded-xl border border-danger/30 px-3.5 py-3">
             <LifeBuoy className="size-5 text-danger" />
