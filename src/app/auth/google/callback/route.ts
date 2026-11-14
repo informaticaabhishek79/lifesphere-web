@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
   } catch {}
   const next = safeNext(saved.next);
   const back = (query: string, hash = '') => {
-    const res = NextResponse.redirect(publicUrl(req, `/sign-in?${query}${next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}${hash}`));
+    const res = NextResponse.redirect(publicUrl(req, `/sign-in?${query}${next !== '/home' ? `&next=${encodeURIComponent(next)}` : ''}${hash}`));
     res.cookies.set(STATE_COOKIE, '', { path: '/auth/google', maxAge: 0 });
     return res;
   };
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
   if (body.status === 'signup_required') return back('google=signup');
   if (body.status === 'mfa_required') return back('google=mfa', `#mfa=${encodeURIComponent(body.mfaToken)}`);
 
-  const dest = body.user.isNew && next === '/' ? '/get-started' : next;
+  const dest = body.user.isNew && next === '/home' ? '/get-started' : next;
   const res = NextResponse.redirect(publicUrl(req, dest));
   res.cookies.set(STATE_COOKIE, '', { path: '/auth/google', maxAge: 0 });
   setSessionCookies(req, res, body);

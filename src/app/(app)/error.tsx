@@ -21,7 +21,7 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
           <Button icon={<RotateCcw className="size-4" />} onClick={reset}>
             {t('common.retry')}
           </Button>
-          <ButtonLink href="/" variant="secondary">
+          <ButtonLink href="/home" variant="secondary">
             {t('nav.home')}
           </ButtonLink>
         </div>

@@ -104,7 +104,7 @@ function GetStarted() {
   const finish = async () => {
     await qc.invalidateQueries({ queryKey: ['me'] });
     qc.invalidateQueries({ queryKey: ['care'] });
-    router.replace('/');
+    router.replace('/home');
   };
   const run = async (fn: () => Promise<void>) => {
     setBusy(true);

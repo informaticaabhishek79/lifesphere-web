@@ -25,7 +25,7 @@ function useNav() {
   const { t } = useI18n();
   const { featureOn, isStaff } = useSession();
   const sections: { title?: string; items: NavItem[] }[] = [
-    { items: [{ href: '/', label: t('nav.home'), icon: Home }] },
+    { items: [{ href: '/home', label: t('nav.home'), icon: Home }] },
     {
       title: t('nav.sectionLife'),
       items: [
@@ -97,7 +97,7 @@ function useNav() {
 }
 
 function isActive(pathname: string, href: string) {
-  return href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`);
+  return href === '/home' ? pathname === '/home' : pathname === href || pathname.startsWith(`${href}/`);
 }
 
 function NavList({ onNavigate }: { onNavigate?: () => void }) {
@@ -234,7 +234,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [pathname]);
 
   const bottom = [
-    { href: '/', label: t('nav.home'), icon: Home },
+    { href: '/home', label: t('nav.home'), icon: Home },
     ...(featureOn('lifeos') ? [{ href: '/tasks', label: t('nav.tasks'), icon: CheckSquare }] : []),
     ...(featureOn('familycare') ? [{ href: me.preferences.homeMode === 'caregiver' ? '/care' : '/check-ins', label: t('nav.family'), icon: HeartPulse }] : []),
     { href: '/notifications', label: t('nav.notifications'), icon: Bell, badge: unread },
@@ -245,7 +245,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return (
       <div className="min-h-dvh">
         <header className="flex h-15 items-center justify-between gap-2 border-b border-line px-4 sm:px-6">
-          <Link href="/" aria-label="LifeSphere home">
+          <Link href="/home" aria-label="LifeSphere home">
             <Logo />
           </Link>
           <LanguageSwitch />
@@ -267,7 +267,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="sticky top-0 hidden h-dvh flex-col border-e border-line bg-surface-2 lg:flex">
         <div className="px-5 pt-5 pb-4">
-          <Link href="/" aria-label="LifeSphere home">
+          <Link href="/home" aria-label="LifeSphere home">
             <Logo />
           </Link>
         </div>
@@ -286,7 +286,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <button type="button" className="rounded-lg p-2 text-ink-2 hover:bg-bg-2 lg:hidden" onClick={() => setDrawer(true)} aria-label={t('common.menu')}>
               <Menu className="size-5" />
             </button>
-            <Link href="/" className="hidden sm:block lg:hidden" aria-label="LifeSphere home">
+            <Link href="/home" className="hidden sm:block lg:hidden" aria-label="LifeSphere home">
               <Logo withWord={false} />
             </Link>
             <div className="flex-1" />
@@ -320,7 +320,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
 
         <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 sm:px-6 lg:px-10 lg:pt-8 lg:pb-12">
-          {pathname === '/' && <InstallBanner />}
+          {pathname === '/home' && <InstallBanner />}
           {children}
         </main>
       </div>
